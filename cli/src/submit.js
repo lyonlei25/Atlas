@@ -26,7 +26,9 @@ export async function submit(args) {
     actualFiles,
     claimedFiles,
     diffText: diffText(cfg.projectRoot),
-    actor: args.owner || cfg.owner,
+    userId: cfg.userId,
+    userName: cfg.userName,
+    actor: args.owner || cfg.userId,
   };
   const { feature, compare } = await api.post(
     cfg,

@@ -79,7 +79,7 @@ const server = createServer(async (req, res) => {
     try {
       // GET /api/board
       if (method === 'GET' && path === '/api/board') {
-        return send(res, 200, { projects: store.board() });
+        return send(res, 200, { projects: store.board(), users: store.allUsers() });
       }
 
       // GET /api/features/:id
@@ -103,6 +103,8 @@ const server = createServer(async (req, res) => {
           declaredScope: b.declaredScope || [],
           acceptance: b.acceptance,
           owner: b.owner,
+          userId: b.userId,
+          userName: b.userName,
         });
         return send(res, 200, { feature: f });
       }
@@ -124,6 +126,8 @@ const server = createServer(async (req, res) => {
           diffText: b.diffText,
           compareResult: cmp,
           actor: b.actor,
+          userId: b.userId,
+          userName: b.userName,
         });
         return send(res, 200, { feature: updated, compare: cmp });
       }
@@ -141,6 +145,7 @@ const server = createServer(async (req, res) => {
           spec: b.spec,
           testCmd: b.testCmd,
         });
+        store.recordUser({ projectId: b.projectId, userId: b.userId, userName: b.userName });
         return send(res, 200, { contract: c });
       }
 
@@ -154,6 +159,8 @@ const server = createServer(async (req, res) => {
           result: b.result,
           actor: b.actor,
           details: b.details,
+          userId: b.userId,
+          userName: b.userName,
         });
         if (!c) return send(res, 404, { error: 'contract not found; create it first' });
         return send(res, 200, { contract: c });

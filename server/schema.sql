@@ -12,6 +12,23 @@ CREATE TABLE IF NOT EXISTS projects (
   created_at  TEXT NOT NULL
 );
 
+-- 身份层（M1）：面向"多人 × 每人多 Agent"。当前不做鉴权——
+-- "我是谁"来自客户端配置，服务端首次见到就 upsert（信任本机，登录押后到 M5）。
+CREATE TABLE IF NOT EXISTS users (
+  id          TEXT PRIMARY KEY,   -- 稳定标识（如邮箱/用户名）
+  name        TEXT NOT NULL,      -- 展示名
+  created_at  TEXT NOT NULL
+);
+
+-- project ↔ user 多对多。看板"看全局所有开发人员"靠它。
+CREATE TABLE IF NOT EXISTS project_members (
+  project_id  TEXT NOT NULL REFERENCES projects(id),
+  user_id     TEXT NOT NULL REFERENCES users(id),
+  role        TEXT NOT NULL DEFAULT 'member',
+  created_at  TEXT NOT NULL,
+  PRIMARY KEY (project_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS milestones (
   id          TEXT PRIMARY KEY,
   project_id  TEXT NOT NULL REFERENCES projects(id),

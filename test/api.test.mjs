@@ -81,3 +81,39 @@ test('board 汇总全局', async () => {
   assert.ok(p.features.length >= 2);
   assert.ok(p.contracts.length >= 2);
 });
+
+test('身份：register 归属到 user，user 被 upsert，成员关系建立', async () => {
+  await post('/api/features/f3/register', {
+    projectId: 'p2',
+    projectName: 'Proj 2',
+    declaredScope: ['x/'],
+    userId: 'alice',
+    userName: 'Alice',
+  });
+  const { projects, users } = await get('/api/board');
+  const alice = users.find((u) => u.id === 'alice');
+  assert.ok(alice && alice.name === 'Alice', 'user 应被 upsert 且带展示名');
+  const p2 = projects.find((p) => p.id === 'p2');
+  assert.equal(p2.features[0].owner, 'alice', 'feature 应归属到 user');
+  assert.ok(p2.members.some((m) => m.id === 'alice'), '应记成员关系');
+});
+
+test('board 按开发者聚合（feature 数 / 越界数 / 展示名）', async () => {
+  await post('/api/features/f4/register', {
+    projectId: 'p2',
+    declaredScope: ['y/'],
+    userId: 'bob',
+    userName: 'Bob',
+  });
+  await post('/api/features/f4/submit', {
+    actualFiles: ['z/out.js'],
+    userId: 'bob',
+    userName: 'Bob',
+  });
+  const { projects } = await get('/api/board');
+  const p2 = projects.find((p) => p.id === 'p2');
+  const bob = p2.developers.find((d) => d.userId === 'bob');
+  assert.equal(bob.featureCount, 1);
+  assert.equal(bob.breachCount, 1, '越界应计入该开发者');
+  assert.equal(bob.name, 'Bob');
+});

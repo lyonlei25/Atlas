@@ -21,6 +21,8 @@ export async function init(args) {
   const target = process.cwd();
   const serverUrl = args.server || process.env.ATLAS_SERVER || 'http://localhost:4317';
   const projectId = args.project || basename(target);
+  const userId = args.user || process.env.ATLAS_USER || process.env.USER || 'unknown';
+  const userName = args['user-name'] || process.env.ATLAS_USER_NAME || userId;
   let created = [];
   let skipped = [];
 
@@ -89,7 +91,11 @@ export async function init(args) {
   } else {
     writeFileSync(
       cfgPath,
-      JSON.stringify({ serverUrl, projectId, projectName: projectId, owner: process.env.USER || 'unknown' }, null, 2) + '\n'
+      JSON.stringify(
+        { serverUrl, projectId, projectName: projectId, userId, userName, owner: userId },
+        null,
+        2
+      ) + '\n'
     );
     created.push('atlas.config.json');
   }

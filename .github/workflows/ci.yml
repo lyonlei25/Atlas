@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # 零外部依赖：用 Node 内置 node:test / node:sqlite / node:http，无需 npm install
+      - name: Run tests
+        run: node --test --no-warnings

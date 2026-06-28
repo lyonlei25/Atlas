@@ -45,6 +45,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 
 .section-label{font-size:11.5px;font-weight:700;letter-spacing:.8px;color:var(--ink-faint);text-transform:uppercase;margin:6px 0 10px}
 
+/* developer grouping */
+.dev-head{display:flex;align-items:center;gap:9px;margin:14px 0 9px}
+.avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 24px}
+.dev-name{font-weight:600;font-size:14px;color:var(--ink)}
+.dev-meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint)}
+
 /* cards grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:13px;margin-bottom:18px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow-sm);cursor:pointer;transition:.14s;position:relative;overflow:hidden}

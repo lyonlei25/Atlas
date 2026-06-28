@@ -17,6 +17,8 @@ export async function contract(args, sub) {
       name: args.name || id,
       spec: args.spec || null,
       testCmd: args.cmd || null,
+      userId: cfg.userId,
+      userName: cfg.userName,
     });
     console.log(`✓ 契约已登记  ${contract.id}  状态: ${contract.status}`);
     return contract;
@@ -37,6 +39,8 @@ export async function contract(args, sub) {
       name: args.name || id,
       spec: args.spec || null,
       testCmd: cmd,
+      userId: cfg.userId,
+      userName: cfg.userName,
     });
 
     console.log(`▶ 跑契约测试: ${cmd}`);
@@ -45,7 +49,9 @@ export async function contract(args, sub) {
 
     const { contract } = await api.post(cfg, `/api/contracts/${encodeURIComponent(id)}/result`, {
       result,
-      actor: args.owner || cfg.owner,
+      userId: cfg.userId,
+      userName: cfg.userName,
+      actor: args.owner || cfg.userId,
       details: { exitCode: run.status, cmd },
     });
     console.log(

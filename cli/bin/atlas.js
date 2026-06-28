@@ -5,6 +5,7 @@ import { submit } from '../src/submit.js';
 import { contract } from '../src/contract.js';
 import { board } from '../src/board.js';
 import { init } from '../src/init.js';
+import { whoami } from '../src/whoami.js';
 
 const HELP = `atlas —— AI-Native 工程治理 · 事实引擎
 
@@ -16,7 +17,8 @@ const HELP = `atlas —— AI-Native 工程治理 · 事实引擎
   atlas contract create --id <cid> [--feature <fid>] [--cmd "..."] [--spec "..."]
   atlas contract run    --id <cid> --cmd "node --test contract/" [--feature <fid>]
                                                   跑可执行契约，测试结果驱动状态
-  atlas board [--feature <id>]                    看全局/单 feature 状态
+  atlas board [--feature <id>]                    看全局(按开发者分组)/单 feature 状态
+  atlas whoami                                    看当前身份 / 服务端 / project
   atlas help
 
 内核：状态由事实(测试/diff)翻牌，比对在服务端做，不信 Agent 自陈。`;
@@ -64,6 +66,8 @@ async function main() {
         return await contract(args, positional[0]);
       case 'board':
         return await board(args);
+      case 'whoami':
+        return await whoami(args);
       case 'help':
       case '--help':
       case '-h':

@@ -20,7 +20,9 @@ export async function register(args) {
     name: args.name || featureId,
     declaredScope,
     acceptance: args.acceptance || null,
-    owner: args.owner || cfg.owner,
+    userId: cfg.userId,
+    userName: cfg.userName,
+    owner: args.owner || cfg.userId,
   };
   const { feature } = await api.post(cfg, `/api/features/${encodeURIComponent(featureId)}/register`, body);
 
@@ -34,6 +36,7 @@ export async function register(args) {
   }
 
   console.log(`✓ 已登记基准线  [${cfg.projectId}] ${feature.id}`);
+  console.log(`  开发者: ${cfg.userName} (${cfg.userId})`);
   console.log(`  范围: ${declaredScope.join(', ') || '(空)'}`);
   if (feature.acceptance) console.log(`  验收: ${feature.acceptance}`);
   console.log(`  状态: ${feature.status}`);

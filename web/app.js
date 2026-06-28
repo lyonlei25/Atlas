@@ -47,6 +47,24 @@ function contractCard(c) {
   </div>`;
 }
 
+function devGroupsHtml(p) {
+  if (!p.features.length) return '';
+  const nameOf = Object.fromEntries((p.developers || []).map((d) => [d.userId, d.name]));
+  const groups = {};
+  for (const f of p.features) (groups[f.owner || '(未指派)'] ||= []).push(f);
+  return Object.entries(groups)
+    .map(([uid, feats]) => {
+      const dev = (p.developers || []).find((d) => d.userId === uid);
+      const meta = dev
+        ? `${dev.featureCount} feature${dev.verifiedCount ? ` · ${dev.verifiedCount} verified` : ''}${dev.breachCount ? ` · ⚠ ${dev.breachCount} 越界` : ''}`
+        : '';
+      const initial = esc((nameOf[uid] || uid).slice(0, 1).toUpperCase());
+      return `<div class="dev-head"><span class="avatar">${initial}</span><span class="dev-name">${esc(nameOf[uid] || uid)}</span><span class="dev-meta">${esc(meta)}</span></div>
+        <div class="grid">${feats.map(featureCard).join('')}</div>`;
+    })
+    .join('');
+}
+
 function render(projects) {
   if (!projects.length) {
     boardEl.innerHTML = `<div class="empty">看板还是空的。<br>先在你的工程里 <code>atlas register --feature ...</code>，或跑 <code>examples/slice/demo.mjs</code>。</div>`;
@@ -56,13 +74,14 @@ function render(projects) {
     .map((p) => {
       const breaches = p.features.filter((f) => f.breach).length;
       const verified = p.features.filter((f) => f.status === 'verified').length;
+      const devCount = (p.developers || []).length;
       return `<section class="project">
         <div class="project-head">
           <span class="project-name">${esc(p.name)}</span>
           <span class="project-id">${esc(p.id)}</span>
-          <span class="counts">${p.features.length} feature · ${verified} verified${breaches ? ` · ⚠ ${breaches} 越界` : ''}</span>
+          <span class="counts">${devCount} 人 · ${p.features.length} feature · ${verified} verified${breaches ? ` · ⚠ ${breaches} 越界` : ''}</span>
         </div>
-        ${p.features.length ? `<div class="section-label">Features（事实驱动状态）</div><div class="grid">${p.features.map(featureCard).join('')}</div>` : ''}
+        ${p.features.length ? `<div class="section-label">Features（按开发者 · 事实驱动状态）</div>${devGroupsHtml(p)}` : ''}
         ${p.contracts.length ? `<div class="section-label">Contracts（测试驱动兑现）</div><div class="grid">${p.contracts.map(contractCard).join('')}</div>` : ''}
       </section>`;
     })

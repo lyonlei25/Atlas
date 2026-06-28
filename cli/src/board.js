@@ -36,13 +36,30 @@ export async function board(args) {
   }
   for (const p of projects) {
     console.log(`\n# ${p.name}  [${p.id}]`);
-    if (p.features.length === 0) console.log('  (无 feature)');
-    for (const f of p.features) {
-      const flag = f.breach ? '  ⚠ 越界标红' : '';
-      console.log(`  ${ICON[f.status] || ' '} ${f.status.padEnd(11)} ${f.name}${flag}`);
+    if (p.features.length === 0 && p.contracts.length === 0) {
+      console.log('  (空)');
+      continue;
     }
-    for (const c of p.contracts) {
-      console.log(`  ${ICON[c.status] || ' '} 契约 ${c.status.padEnd(9)} ${c.name}`);
+    // 按开发者分组（"看全局所有开发人员"）
+    const nameOf = Object.fromEntries((p.developers || []).map((d) => [d.userId, d.name]));
+    const groups = {};
+    for (const f of p.features) (groups[f.owner || '(未指派)'] ||= []).push(f);
+    for (const [uid, feats] of Object.entries(groups)) {
+      const dev = (p.developers || []).find((d) => d.userId === uid);
+      const summary = dev
+        ? `${dev.featureCount} feature${dev.verifiedCount ? ` · ${dev.verifiedCount} verified` : ''}${dev.breachCount ? ` · ⚠ ${dev.breachCount} 越界` : ''}`
+        : '';
+      console.log(`  ▸ ${nameOf[uid] || uid}  ${summary}`);
+      for (const f of feats) {
+        const flag = f.breach ? '  ⚠ 越界' : '';
+        console.log(`      ${ICON[f.status] || ' '} ${f.status.padEnd(11)} ${f.name}${flag}`);
+      }
+    }
+    if (p.contracts.length) {
+      console.log('  ▸ 契约');
+      for (const c of p.contracts) {
+        console.log(`      ${ICON[c.status] || ' '} ${c.status.padEnd(9)} ${c.name}`);
+      }
     }
   }
 }

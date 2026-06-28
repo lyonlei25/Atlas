@@ -5,6 +5,8 @@
 
 完整设计蓝图见 [`docs/`](docs/)（7 份文档），或启动服务端后访问 `/docs` 看可视化版。
 
+**新手从这开始** → [5 分钟上手](docs/getting-started.md) · **想贡献** → [CONTRIBUTING](CONTRIBUTING.md) · 开源协议 MIT · 零外部依赖（Node ≥ 22.5）
+
 ---
 
 ## 一句话内核
@@ -81,3 +83,8 @@ atlas board                                                          # 看全局
 
 `docs/` 里是这套方案的完整论证（为什么是事实驱动、为什么不让 Agent 自陈、三级可信度看板……）。
 源自 `Downloads/project` 的蓝图，已落为单一信息源。本版只实现内核纵切 + 脚手架；L1 机器强制全集、L2 范围冻结流程、L3 越界处置全流程、说法层 wiki 贬值等留给「往外长」。
+
+## 贡献 & 协议
+
+欢迎贡献，见 [CONTRIBUTING.md](CONTRIBUTING.md)。CI 在每次 push/PR 跑 `node --test`（GitHub Actions）。
+开源协议：[MIT](LICENSE)。

@@ -6,6 +6,9 @@ const DEFAULTS = {
   serverUrl: process.env.ATLAS_SERVER || 'http://localhost:4317',
   projectId: null,
   projectName: null,
+  // 身份（M1）：多人 × 每人多 Agent。userId 是稳定标识，userName 是展示名。
+  userId: process.env.ATLAS_USER || process.env.USER || 'unknown',
+  userName: process.env.ATLAS_USER_NAME || process.env.ATLAS_USER || process.env.USER || 'unknown',
   owner: process.env.ATLAS_OWNER || process.env.USER || 'unknown',
 };
 
@@ -33,10 +36,14 @@ export function loadConfig(startDir = process.cwd()) {
   }
   const cfg = { ...DEFAULTS, ...fileCfg, configPath: found, projectRoot: found ? dirname(found) : startDir };
   if (process.env.ATLAS_SERVER) cfg.serverUrl = process.env.ATLAS_SERVER;
+  if (process.env.ATLAS_USER) cfg.userId = process.env.ATLAS_USER;
+  if (process.env.ATLAS_USER_NAME) cfg.userName = process.env.ATLAS_USER_NAME;
   if (!cfg.projectId) {
     cfg.projectId = found ? require_basename(dirname(found)) : require_basename(startDir);
   }
   if (!cfg.projectName) cfg.projectName = cfg.projectId;
+  if (!cfg.userName) cfg.userName = cfg.userId;
+  if (!cfg.owner) cfg.owner = cfg.userId;
   return cfg;
 }
 

@@ -31,6 +31,44 @@ class Store {
     return id;
   }
 
+  // --- 身份层（M1）：无鉴权，首次见到即 upsert ---
+  upsertUser(id, name) {
+    if (!id) return;
+    const row = this.db.prepare('SELECT id,name FROM users WHERE id=?').get(id);
+    if (!row) {
+      this.db.prepare('INSERT INTO users(id,name,created_at) VALUES(?,?,?)').run(id, name || id, now());
+    } else if (name && name !== row.name) {
+      this.db.prepare('UPDATE users SET name=? WHERE id=?').run(name, id);
+    }
+  }
+
+  addMember(projectId, userId, role = 'member') {
+    if (!projectId || !userId) return;
+    this.db
+      .prepare('INSERT OR IGNORE INTO project_members(project_id,user_id,role,created_at) VALUES(?,?,?,?)')
+      .run(projectId, userId, role, now());
+  }
+
+  // 把"谁干的"落实：upsert user + 记 project 成员关系。所有写操作带 userId 时都调它。
+  recordUser({ projectId, userId, userName }) {
+    if (!userId) return null;
+    this.upsertUser(userId, userName);
+    if (projectId) this.addMember(projectId, userId);
+    return userId;
+  }
+
+  allUsers() {
+    return this.db.prepare('SELECT * FROM users ORDER BY created_at').all();
+  }
+
+  membersOf(projectId) {
+    return this.db
+      .prepare(
+        'SELECT pm.user_id AS id, u.name, pm.role FROM project_members pm JOIN users u ON u.id=pm.user_id WHERE pm.project_id=? ORDER BY pm.created_at'
+      )
+      .all(projectId);
+  }
+
   // --- 事实层：只追加 ---
   addFact({ projectId, subjectType, subjectId, kind, payload, actor }) {
     this.db
@@ -48,8 +86,10 @@ class Store {
   }
 
   // --- Feature ---
-  registerFeature({ projectId, projectName, id, name, declaredScope, acceptance, owner }) {
+  registerFeature({ projectId, projectName, id, name, declaredScope, acceptance, owner, userId, userName }) {
     this.ensureProject(projectId, projectName);
+    owner = userId || owner; // owner 现在语义 = user_id
+    this.recordUser({ projectId, userId: owner, userName });
     const fid = id || uid('feat');
     const existing = this.db.prepare('SELECT id FROM features WHERE id=?').get(fid);
     if (existing) {
@@ -101,10 +141,12 @@ class Store {
   }
 
   // 收 diff -> 写事实 -> 比对结果落库（status: submitted）。比对在 server/compare.js 做，不信自陈。
-  applySubmission(id, { actualFiles, claimedFiles, diffText, compareResult, actor }) {
+  applySubmission(id, { actualFiles, claimedFiles, diffText, compareResult, actor, userId, userName }) {
     const f = this.db.prepare('SELECT * FROM features WHERE id=?').get(id);
     if (!f) return null;
     const projectId = f.project_id;
+    this.recordUser({ projectId, userId, userName });
+    actor = userId || actor;
     this.addFact({
       projectId,
       subjectType: 'feature',
@@ -165,9 +207,11 @@ class Store {
   }
 
   // 契约状态由测试结果驱动：pass -> fulfilled，fail -> broken。这是"测试驱动状态"的核心。
-  applyContractResult(id, { result, actor, details }) {
+  applyContractResult(id, { result, actor, details, userId, userName }) {
     const c = this.db.prepare('SELECT * FROM contracts WHERE id=?').get(id);
     if (!c) return null;
+    this.recordUser({ projectId: c.project_id, userId, userName });
+    actor = userId || actor;
     const status = result === 'pass' ? 'fulfilled' : 'broken';
     this.db
       .prepare('UPDATE contracts SET status=?, last_result=?, updated_at=? WHERE id=?')
@@ -190,16 +234,28 @@ class Store {
   // --- 全局看板视图 ---
   board() {
     const projects = this.db.prepare('SELECT * FROM projects ORDER BY created_at').all();
-    return projects.map((p) => ({
-      ...p,
-      features: this.db
+    return projects.map((p) => {
+      const features = this.db
         .prepare('SELECT * FROM features WHERE project_id=? ORDER BY created_at DESC')
         .all(p.id)
-        .map(hydrateFeature),
-      contracts: this.db
+        .map(hydrateFeature);
+      const contracts = this.db
         .prepare('SELECT * FROM contracts WHERE project_id=? ORDER BY created_at DESC')
-        .all(p.id),
-    }));
+        .all(p.id);
+      const members = this.membersOf(p.id);
+      // 按开发者聚合：每人多少 feature、几处越界（"看全局所有开发人员"）
+      const byDev = {};
+      for (const f of features) {
+        const k = f.owner || '(unassigned)';
+        (byDev[k] ||= { userId: k, featureCount: 0, breachCount: 0, verifiedCount: 0 });
+        byDev[k].featureCount++;
+        if (f.breach) byDev[k].breachCount++;
+        if (f.status === 'verified') byDev[k].verifiedCount++;
+      }
+      const nameOf = Object.fromEntries(members.map((m) => [m.id, m.name]));
+      const developers = Object.values(byDev).map((d) => ({ ...d, name: nameOf[d.userId] || d.userId }));
+      return { ...p, features, contracts, members, developers };
+    });
   }
 }
 
