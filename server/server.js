@@ -163,6 +163,31 @@ const server = createServer(async (req, res) => {
         return send(res, 200, { feature: updated, compare: cmp });
       }
 
+      // POST /api/features/:id/verify —— 事实闸门：测试/CI 结果驱动 done（CI 事实源）
+      if (method === 'POST' && (m = path.match(/^\/api\/features\/([^/]+)\/verify$/))) {
+        const b = await readBody(req);
+        const id = decodeURIComponent(m[1]);
+        if (b.result !== 'pass' && b.result !== 'fail')
+          return send(res, 400, { error: "result must be 'pass' or 'fail'" });
+        const r = store.verifyFeature(id, {
+          result: b.result,
+          actor: b.userId || b.actor,
+          userName: b.userName,
+          details: b.details,
+        });
+        if (!r) return send(res, 404, { error: 'feature not found' });
+        return send(res, 200, r);
+      }
+
+      // POST /api/features/:id/status —— 意图状态（人/Agent 设）；done 被拒绝（必须经 verify）
+      if (method === 'POST' && (m = path.match(/^\/api\/features\/([^/]+)\/status$/))) {
+        const b = await readBody(req);
+        const id = decodeURIComponent(m[1]);
+        const r = store.setFeatureStatus(id, b.status);
+        if (r.error) return send(res, r.error === 'feature not found' ? 404 : 400, { error: r.error });
+        return send(res, 200, r);
+      }
+
       // POST /api/contracts  —— upsert（注册一份可执行契约）
       if (method === 'POST' && path === '/api/contracts') {
         const b = await readBody(req);

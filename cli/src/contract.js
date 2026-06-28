@@ -56,7 +56,7 @@ export async function contract(args, sub) {
     });
     console.log(
       result === 'pass'
-        ? `✓ 测试通过 → 服务端翻牌: contract=${contract.status}（关联 feature 随之 verified）`
+        ? `✓ 测试通过 → 服务端翻牌: contract=${contract.status}（关联 feature 经事实闸门→done，若无越界）`
         : `✗ 测试失败 → contract=${contract.status}（状态不会翻成兑现）`
     );
     if (result === 'fail') process.exitCode = 2;

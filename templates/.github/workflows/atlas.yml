@@ -1,0 +1,22 @@
+# Atlas：把 CI 接成"事实源"——测试通过（且无越界）才让 feature 进「完成」。
+# 这是示例模板，按你的项目改：feature id、测试命令、ATLAS_SERVER。
+name: atlas-verify
+
+on: [push, pull_request]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      ATLAS_SERVER: ${{ secrets.ATLAS_SERVER }} # 你的 Atlas 服务端地址（仓库 Secrets 里设）
+      ATLAS_USER: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # atlas verify 跑测试命令，把"通过/失败"作为事实交看板。
+      # 通过且无越界 → 对应 feature 自动进「完成」；不会有人手动点。
+      # 注意：CI 里需要 atlas 可执行（npm i -g 你的 atlas，或换成 node /path/to/Atlas/cli/bin/atlas.js）。
+      - run: atlas verify --feature CHANGE-ME --cmd "npm test"

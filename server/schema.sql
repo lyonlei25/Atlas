@@ -45,9 +45,9 @@ CREATE TABLE IF NOT EXISTS features (
   project_id   TEXT NOT NULL REFERENCES projects(id),
   milestone_id TEXT REFERENCES milestones(id),
   name         TEXT NOT NULL,
-  -- 状态只由事实翻牌：registered -> in_progress -> submitted -> verified
-  -- 绝不存在 "agent 宣布 done 就 verified" 的路径。
-  status       TEXT NOT NULL DEFAULT 'registered',
+  -- 状态机（治理味）：backlog -> planned -> in_progress -> in_review -> done；越界/撞线 -> blocked
+  -- 「done」只能由事实闸门（测试/CI 通过 + 无越界）进，绝无"宣布完成"的口子。
+  status       TEXT NOT NULL DEFAULT 'in_progress',
   -- L3 硬锚：开工时声明的范围（基准线），JSON 数组字符串
   declared_scope TEXT,           -- 计划碰的文件 glob/路径列表
   acceptance     TEXT,           -- 验收标准（自然语言）

@@ -29,7 +29,7 @@ export async function project(args, sub) {
     console.log(`# ${p.name}  [${p.id}]`);
     console.log(`  目标: ${p.goal || '(未设，用 atlas project set --goal "...")'}`);
     console.log(`  wiki: ${p.wiki || '(未设)'}`);
-    console.log(`  进度: ${p.progress.verified}/${p.progress.total} verified (${p.progress.pct}%)${p.progress.breach ? ` · ⚠ ${p.progress.breach} 越界` : ''}`);
+    console.log(`  进度: ${p.progress.done}/${p.progress.total} 完成 (${p.progress.pct}%)${p.progress.breach ? ` · ⚠ ${p.progress.breach} 越界` : ''}`);
     return;
   }
 

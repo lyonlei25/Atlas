@@ -151,6 +151,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .st-open{background:var(--bg-deep);color:var(--ink-soft)}
 .st-frozen{background:var(--c-contract-bg);color:var(--c-contract)}
 .st-done{background:var(--c-fact-bg);color:var(--c-fact)}
+/* feature 6 态 */
+.st-backlog{background:var(--bg-deep);color:var(--ink-faint)}
+.st-planned{background:var(--bg-deep);color:var(--ink-soft)}
+.st-in_progress{background:var(--c-contract-bg);color:var(--c-contract)}
+.st-in_review{background:var(--c-say-bg);color:var(--c-say)}
+.st-blocked{background:var(--c-danger-bg);color:var(--c-danger)}
 .flag{font-size:11px;color:var(--c-danger);font-weight:600}
 
 /* feature 进展时间线 */

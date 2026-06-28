@@ -30,14 +30,14 @@ const post = (p, b) =>
   );
 const get = (p) => fetch(base + p).then((r) => r.json());
 
-test('register 写基准线，状态 registered', async () => {
+test('register 写基准线 → in_progress（开工）', async () => {
   const { json } = await post('/api/features/f1/register', {
     projectId: 'p1',
     projectName: 'Proj 1',
     declaredScope: ['src/business/'],
     acceptance: 'x',
   });
-  assert.equal(json.feature.status, 'registered');
+  assert.equal(json.feature.status, 'in_progress');
   assert.deepEqual(json.feature.declared_scope, ['src/business/']);
 });
 
@@ -46,7 +46,7 @@ test('契约测试 pass → contract=fulfilled 且关联 feature=verified（事�
   const { json } = await post('/api/contracts/c1/result', { result: 'pass', actor: 'tester' });
   assert.equal(json.contract.status, 'fulfilled');
   const { feature } = await get('/api/features/f1');
-  assert.equal(feature.status, 'verified', 'feature 应被事实(测试通过)驱动成 verified');
+  assert.equal(feature.status, 'done', 'feature 应被事实(测试通过+无越界)驱动成 done');
 });
 
 test('契约测试 fail → contract=broken，不翻成兑现', async () => {
@@ -55,7 +55,7 @@ test('契约测试 fail → contract=broken，不翻成兑现', async () => {
   const { json } = await post('/api/contracts/c2/result', { result: 'fail' });
   assert.equal(json.contract.status, 'broken');
   const { feature } = await get('/api/features/f2');
-  assert.notEqual(feature.status, 'verified');
+  assert.notEqual(feature.status, 'done');
 });
 
 test('submit 越界 → 服务端比对 breach=true，creep 抓到范围外文件', async () => {
@@ -66,7 +66,37 @@ test('submit 越界 → 服务端比对 breach=true，creep 抓到范围外文�
   assert.equal(json.compare.breach, true);
   assert.deepEqual(json.compare.creep, ['src/base/price.js']);
   assert.equal(json.feature.breach, true);
-  assert.equal(json.feature.status, 'submitted');
+  assert.equal(json.feature.status, 'in_review');
+});
+
+test('verify 闸门：pass + 无越界 → done', async () => {
+  await post('/api/features/fv/register', { projectId: 'p1', declaredScope: ['v/'], userId: 'vic', userName: 'Vic' });
+  const { json } = await post('/api/features/fv/verify', { result: 'pass', userId: 'vic' });
+  assert.equal(json.done, true);
+  assert.equal(json.feature.status, 'done');
+});
+
+test('verify 闸门：pass 但有越界 → 不 done（给原因）', async () => {
+  await post('/api/features/fb/register', { projectId: 'p1', declaredScope: ['b/'], userId: 'vic' });
+  await post('/api/features/fb/submit', { actualFiles: ['x/out.js'], userId: 'vic' }); // 制造越界
+  const { json } = await post('/api/features/fb/verify', { result: 'pass', userId: 'vic' });
+  assert.equal(json.done, false);
+  assert.notEqual(json.feature.status, 'done');
+  assert.match(json.reason, /越界/);
+});
+
+test('verify: fail → 不 done', async () => {
+  await post('/api/features/ff/register', { projectId: 'p1', declaredScope: ['f/'], userId: 'vic' });
+  const { json } = await post('/api/features/ff/verify', { result: 'fail', userId: 'vic' });
+  assert.equal(json.done, false);
+});
+
+test('意图状态可设 blocked；done 被服务端拒绝（必须经 verify）', async () => {
+  await post('/api/features/fs/register', { projectId: 'p1', declaredScope: ['s/'], userId: 'vic' });
+  const ok = await post('/api/features/fs/status', { status: 'blocked' });
+  assert.equal(ok.json.feature.status, 'blocked');
+  const no = await post('/api/features/fs/status', { status: 'done' });
+  assert.equal(no.status, 400);
 });
 
 test('没有"宣布完成"的端点：result 只认 pass/fail', async () => {

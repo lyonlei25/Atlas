@@ -4,13 +4,20 @@
 export function humanizeStatus(status) {
   return (
     {
-      registered: '已声明范围',
+      backlog: '待办',
+      planned: '已排期',
       in_progress: '开发中',
-      submitted: '已交改动',
-      verified: '已验证',
+      in_review: '待验',
+      done: '完成',
+      blocked: '受阻',
+      // 契约
       drafted: '草拟中',
       fulfilled: '已兑现',
       broken: '测试未过',
+      // 兼容旧值
+      registered: '开发中',
+      submitted: '待验',
+      verified: '完成',
     }[status] || status
   );
 }

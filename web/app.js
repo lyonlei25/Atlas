@@ -46,7 +46,7 @@ const statusPill = (status) => `<span class="pill st-${esc(status)}">${esc(human
 const bar = (pr) => `<div class="bar"><span style="width:${(pr && pr.pct) || 0}%"></span></div>`;
 
 const progText = (pr) =>
-  `${(pr && pr.verified) || 0}/${(pr && pr.total) || 0} feature 已验证 · ${(pr && pr.pct) || 0}%${
+  `${(pr && pr.done) || 0}/${(pr && pr.total) || 0} feature 完成 · ${(pr && pr.pct) || 0}%${
     pr && pr.breach ? ` · ⚠ ${pr.breach} 越界` : ''
   }`;
 

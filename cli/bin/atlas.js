@@ -8,6 +8,8 @@ import { init } from '../src/init.js';
 import { whoami } from '../src/whoami.js';
 import { milestone } from '../src/milestone.js';
 import { project } from '../src/project.js';
+import { verify } from '../src/verify.js';
+import { feature } from '../src/feature.js';
 
 const HELP = `atlas —— AI-Native 工程治理 · 事实引擎
 
@@ -19,6 +21,9 @@ const HELP = `atlas —— AI-Native 工程治理 · 事实引擎
   atlas register --feature <id> --files a.js,src/ [--milestone <mid>] [--acceptance "..."]
                                                   开工：声明范围(基准线)，可挂到里程碑
   atlas submit   --feature <id> [--claimed a.js]  收工：抓真实 diff 交服务端比对
+  atlas verify   --feature <id> --cmd "<测试命令>"  事实闸门：测试/CI 通过+无越界→done
+  atlas feature status --feature <id> --status <backlog|planned|in_progress|in_review|blocked>
+                                                  设意图状态（done 不能手动设）
   atlas contract create --id <cid> [--feature <fid>] [--cmd "..."] [--spec "..."]
   atlas contract run    --id <cid> --cmd "node --test contract/" [--feature <fid>]
                                                   跑可执行契约，测试结果驱动状态
@@ -67,6 +72,10 @@ async function main() {
         return await register(args);
       case 'submit':
         return await submit(args);
+      case 'verify':
+        return await verify(args);
+      case 'feature':
+        return await feature(args, positional[0]);
       case 'contract':
         return await contract(args, positional[0]);
       case 'board':

@@ -2,10 +2,12 @@
 import { loadConfig, api } from './api.js';
 
 const ICON = {
-  registered: '○',
+  backlog: '·',
+  planned: '○',
   in_progress: '◐',
-  submitted: '◑',
-  verified: '●',
+  in_review: '◑',
+  done: '●',
+  blocked: '⛔',
   drafted: '○',
   fulfilled: '●',
   broken: '✗',

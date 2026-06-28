@@ -44,6 +44,19 @@ atlas board               # 看全局（按开发者分组）
 
 `atlas init` 装了一个 Claude Code 的 Stop hook：开发结束时自动 `atlas submit`，事实源不依赖你/Agent 记得手动交。需要 `atlas` 在 PATH（见第 2 步）。
 
+## 6.（可选）把 CI 接成"事实源"
+
+feature 进「完成」**只能由事实**驱动：测试/CI 通过 **且无越界**。本地或 CI 里都用同一条命令：
+
+```bash
+atlas verify --feature my-first --cmd "npm test"
+# 通过且无越界 → feature 进「完成」(done)；有越界即便测试过也进不去（会提示先清越界）
+```
+
+- 人不能手动把 feature 拖到「完成」——`atlas feature status --feature X --status done` 会被服务端拒绝。
+- 意图状态（待办/已排期/受阻）可以人工设：`atlas feature status --feature X --status blocked`。
+- GitHub Actions 示例见 `atlas init` 铺进来的 `.github/workflows/atlas.yml`（改 feature id 和测试命令）。
+
 ---
 
 下一步：读 `docs/`（设计蓝图，讲为什么是事实驱动），或 `examples/slice/`（最小纵切 demo）。

@@ -2,10 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { humanizeFact, humanizeStatus } from '../web/humanize.js';
 
-test('humanizeStatus 把机制状态翻成人话', () => {
-  assert.equal(humanizeStatus('verified'), '已验证');
-  assert.equal(humanizeStatus('registered'), '已声明范围');
-  assert.equal(humanizeStatus('submitted'), '已交改动');
+test('humanizeStatus 把 6 态翻成人话', () => {
+  assert.equal(humanizeStatus('backlog'), '待办');
+  assert.equal(humanizeStatus('planned'), '已排期');
+  assert.equal(humanizeStatus('in_progress'), '开发中');
+  assert.equal(humanizeStatus('in_review'), '待验');
+  assert.equal(humanizeStatus('done'), '完成');
+  assert.equal(humanizeStatus('blocked'), '受阻');
 });
 
 test('humanizeFact: register → 声明范围', () => {

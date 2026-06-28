@@ -24,6 +24,10 @@ export function openDb(file = join(__dirname, 'atlas.db')) {
       /* 列已存在 */
     }
   }
+  // 状态迁到 6 态（治理味）。幂等：只命中旧值。
+  db.exec("UPDATE features SET status='in_progress' WHERE status='registered'");
+  db.exec("UPDATE features SET status='in_review' WHERE status='submitted'");
+  db.exec("UPDATE features SET status='done' WHERE status='verified'");
   return new Store(db);
 }
 
@@ -162,7 +166,7 @@ class Store {
           acceptance || null,
           owner || null,
           milestoneId || null,
-          'registered',
+          'in_progress',
           now(),
           fid
         );
@@ -176,7 +180,7 @@ class Store {
           projectId,
           milestoneId || null,
           name || fid,
-          'registered',
+          'in_progress',
           JSON.stringify(declaredScope || []),
           acceptance || null,
           owner || null,
@@ -227,7 +231,7 @@ class Store {
     this.db
       .prepare('UPDATE features SET status=?, breach=?, breach_detail=?, updated_at=? WHERE id=?')
       .run(
-        'submitted',
+        'in_review',
         compareResult.breach ? 1 : 0,
         JSON.stringify({ creep: compareResult.creep, hidden: compareResult.hidden }),
         now(),
@@ -236,12 +240,45 @@ class Store {
     return this.getFeature(id);
   }
 
-  // 仅当事实（测试结果）允许时才翻 verified。没有"宣布完成"的路径。
-  markVerifiedByFact(id, actor) {
-    this.db
-      .prepare('UPDATE features SET status=?, updated_at=? WHERE id=?')
-      .run('verified', now(), id);
-    return this.getFeature(id);
+  // 事实闸门：唯一进入「done」的路径。要求无越界。没有"宣布完成"的口子。
+  completeByFact(id, actor) {
+    const f = this.db.prepare('SELECT * FROM features WHERE id=?').get(id);
+    if (!f) return { feature: null, done: false, reason: 'feature not found' };
+    if (f.breach) {
+      return { feature: this.getFeature(id), done: false, reason: '越界未清——先处理越界，再验收' };
+    }
+    this.db.prepare('UPDATE features SET status=?, updated_at=? WHERE id=?').run('done', now(), id);
+    return { feature: this.getFeature(id), done: true, reason: null };
+  }
+
+  // atlas verify / CI 交来的事实。pass 且无越界 → done；否则不动到 done。
+  verifyFeature(id, { result, actor, userName, details }) {
+    const f = this.db.prepare('SELECT * FROM features WHERE id=?').get(id);
+    if (!f) return null;
+    this.recordUser({ projectId: f.project_id, userId: actor, userName });
+    this.addFact({
+      projectId: f.project_id,
+      subjectType: 'feature',
+      subjectId: id,
+      kind: 'test_result',
+      payload: { result, scope: 'feature', details: details || null },
+      actor,
+    });
+    if (result === 'pass') return this.completeByFact(id, actor);
+    return { feature: this.getFeature(id), done: false, reason: '测试未通过' };
+  }
+
+  // 意图状态（人/Agent 设）：backlog/planned/in_progress/in_review/blocked。
+  // done 不在此列——必须经 completeByFact（事实）。
+  setFeatureStatus(id, status) {
+    const intent = ['backlog', 'planned', 'in_progress', 'in_review', 'blocked'];
+    if (status === 'done')
+      return { error: 'done 不能手动设置——必须经 atlas verify（测试/CI 通过且无越界）' };
+    if (!intent.includes(status)) return { error: `非法状态：${status}` };
+    const f = this.db.prepare('SELECT id FROM features WHERE id=?').get(id);
+    if (!f) return { error: 'feature not found' };
+    this.db.prepare('UPDATE features SET status=?, updated_at=? WHERE id=?').run(status, now(), id);
+    return { feature: this.getFeature(id) };
   }
 
   // --- Contract ---
@@ -287,7 +324,7 @@ class Store {
     });
     // 契约兑现 -> 关联 feature 跟着翻 verified（同样是事实驱动，不是宣布）
     if (status === 'fulfilled' && c.feature_id) {
-      this.markVerifiedByFact(c.feature_id, 'atlas-server(contract)');
+      this.completeByFact(c.feature_id, 'atlas-server(contract)'); // 同一事实闸门：契约通过+无越界才 done
     }
     return this.getContract(id);
   }
@@ -308,10 +345,10 @@ class Store {
       const byDev = {};
       for (const f of features) {
         const k = f.owner || '(unassigned)';
-        (byDev[k] ||= { userId: k, featureCount: 0, breachCount: 0, verifiedCount: 0 });
+        (byDev[k] ||= { userId: k, featureCount: 0, breachCount: 0, doneCount: 0 });
         byDev[k].featureCount++;
         if (f.breach) byDev[k].breachCount++;
-        if (f.status === 'verified') byDev[k].verifiedCount++;
+        if (f.status === 'done') byDev[k].doneCount++;
       }
       const nameOf = Object.fromEntries(members.map((m) => [m.id, m.name]));
       const developers = Object.values(byDev).map((d) => ({ ...d, name: nameOf[d.userId] || d.userId }));
@@ -326,9 +363,14 @@ class Store {
       }
       const milestones = Object.values(byMs);
       if (unassigned.features.length) milestones.push(unassigned);
-      // 进度由事实自动汇总：feature(verified) → 里程碑 → 项目
-      for (const m of milestones) m.progress = progressOf(m.features);
-      return { ...p, features, milestones, contracts, members, developers, progress: progressOf(features) };
+      // 进度由事实自动汇总：feature(done) → 里程碑 → 项目；「完成」逐层 derive
+      for (const m of milestones) {
+        m.progress = progressOf(m.features);
+        if (m.id !== '__unassigned__' && m.features.length && m.progress.pct === 100) m.status = 'done';
+      }
+      const realMs = milestones.filter((m) => m.id !== '__unassigned__');
+      const projStatus = realMs.length && realMs.every((m) => m.status === 'done') ? 'done' : 'active';
+      return { ...p, status: projStatus, features, milestones, contracts, members, developers, progress: progressOf(features) };
     });
   }
 }
@@ -354,7 +396,7 @@ function safeParse(s) {
 // 进度汇总（事实驱动）：verified 占比 + 越界数
 function progressOf(feats) {
   const total = feats.length;
-  const verified = feats.filter((f) => f.status === 'verified').length;
+  const done = feats.filter((f) => f.status === 'done').length;
   const breach = feats.filter((f) => f.breach).length;
-  return { total, verified, breach, pct: total ? Math.round((verified / total) * 100) : 0 };
+  return { total, done, breach, pct: total ? Math.round((done / total) * 100) : 0 };
 }
