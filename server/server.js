@@ -105,8 +105,24 @@ const server = createServer(async (req, res) => {
           owner: b.owner,
           userId: b.userId,
           userName: b.userName,
+          milestoneId: b.milestoneId,
         });
         return send(res, 200, { feature: f });
+      }
+
+      // POST /api/milestones —— 建/改里程碑（Project ▸ Milestone ▸ Feature 的中间层）
+      if (method === 'POST' && path === '/api/milestones') {
+        const b = await readBody(req);
+        if (!b.projectId) return send(res, 400, { error: 'projectId required' });
+        const ms = store.upsertMilestone({
+          projectId: b.projectId,
+          projectName: b.projectName,
+          id: b.id,
+          name: b.name,
+          status: b.status,
+        });
+        store.recordUser({ projectId: b.projectId, userId: b.userId, userName: b.userName });
+        return send(res, 200, { milestone: ms });
       }
 
       // POST /api/features/:id/submit  —— 收事实，服务端比对

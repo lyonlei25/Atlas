@@ -6,13 +6,16 @@ import { contract } from '../src/contract.js';
 import { board } from '../src/board.js';
 import { init } from '../src/init.js';
 import { whoami } from '../src/whoami.js';
+import { milestone } from '../src/milestone.js';
 
 const HELP = `atlas —— AI-Native 工程治理 · 事实引擎
 
 用法:
   atlas init [--server URL] [--project ID]        把集成模板铺进当前工程
-  atlas register --feature <id> --files a.js,src/ [--acceptance "..."]
-                                                  开工：声明范围(基准线)
+  atlas milestone create --id <mid> [--name "..."]   建里程碑（项目▸里程碑▸feature 的中间层）
+  atlas milestone list                            列本 project 的里程碑
+  atlas register --feature <id> --files a.js,src/ [--milestone <mid>] [--acceptance "..."]
+                                                  开工：声明范围(基准线)，可挂到里程碑
   atlas submit   --feature <id> [--claimed a.js]  收工：抓真实 diff 交服务端比对
   atlas contract create --id <cid> [--feature <fid>] [--cmd "..."] [--spec "..."]
   atlas contract run    --id <cid> --cmd "node --test contract/" [--feature <fid>]
@@ -66,6 +69,8 @@ async function main() {
         return await contract(args, positional[0]);
       case 'board':
         return await board(args);
+      case 'milestone':
+        return await milestone(args, positional[0]);
       case 'whoami':
         return await whoami(args);
       case 'help':

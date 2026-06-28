@@ -20,6 +20,7 @@ export async function register(args) {
     name: args.name || featureId,
     declaredScope,
     acceptance: args.acceptance || null,
+    milestoneId: args.milestone || null,
     userId: cfg.userId,
     userName: cfg.userName,
     owner: args.owner || cfg.userId,
@@ -36,6 +37,7 @@ export async function register(args) {
   }
 
   console.log(`✓ 已登记基准线  [${cfg.projectId}] ${feature.id}`);
+  if (feature.milestone_id) console.log(`  里程碑: ${feature.milestone_id}`);
   console.log(`  开发者: ${cfg.userName} (${cfg.userId})`);
   console.log(`  范围: ${declaredScope.join(', ') || '(空)'}`);
   if (feature.acceptance) console.log(`  验收: ${feature.acceptance}`);

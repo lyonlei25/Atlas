@@ -45,11 +45,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 
 .section-label{font-size:11.5px;font-weight:700;letter-spacing:.8px;color:var(--ink-faint);text-transform:uppercase;margin:6px 0 10px}
 
-/* developer grouping */
-.dev-head{display:flex;align-items:center;gap:9px;margin:14px 0 9px}
-.avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 24px}
-.dev-name{font-weight:600;font-size:14px;color:var(--ink)}
-.dev-meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint)}
+/* milestone grouping (Project ▸ Milestone ▸ Feature) */
+.ms-head{display:flex;align-items:center;gap:8px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+.ms-diamond{color:var(--c-contract);font-size:13px}
+.ms-name{font-weight:600;font-size:14.5px;color:var(--ink)}
+.ms-status{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:20px}
+.ms-count{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint)}
+.ms-empty{color:var(--ink-faint);font-size:12.5px;padding:2px 0 10px}
+/* developer tag on feature card */
+.mini-avatar{width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px}
 
 /* cards grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:13px;margin-bottom:18px}
@@ -72,7 +76,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
 .scope-label{color:var(--ink-faint)}
 .breach-flag{margin-top:9px;font-size:12px;color:var(--c-danger);font-weight:600;display:flex;align-items:center;gap:5px}
 .breach-detail{font-family:var(--mono);font-size:11px;color:var(--c-danger);margin-top:3px;word-break:break-all}
-.owner{font-size:11px;color:var(--ink-faint);margin-top:8px;font-family:var(--mono)}
+.owner{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);margin-top:9px;font-family:var(--mono)}
 
 .empty{color:var(--ink-faint);font-size:14px;padding:50px 0;text-align:center}
 .empty code{font-family:var(--mono);background:var(--bg-deep);padding:2px 6px;border-radius:5px}

@@ -11,7 +11,7 @@ async function fetchBoard() {
   return (await res.json()).projects || [];
 }
 
-function featureCard(f) {
+function featureCard(f, nameOf = {}) {
   const breach = f.breach;
   const cls = ['card', 'feature', f.status, breach ? 'breach' : ''].join(' ');
   const scope = (f.declared_scope || []).join('  ·  ') || '(未声明)';
@@ -31,7 +31,7 @@ function featureCard(f) {
     </div>
     <div class="scope"><span class="scope-label">范围 </span>${esc(scope)}</div>
     ${breachHtml}
-    ${f.owner ? `<div class="owner">@${esc(f.owner)}</div>` : ''}
+    ${f.owner ? `<div class="owner"><span class="mini-avatar">${esc((nameOf[f.owner] || f.owner).slice(0, 1).toUpperCase())}</span>${esc(nameOf[f.owner] || f.owner)}</div>` : ''}
   </div>`;
 }
 
@@ -47,20 +47,16 @@ function contractCard(c) {
   </div>`;
 }
 
-function devGroupsHtml(p) {
-  if (!p.features.length) return '';
+function milestonesHtml(p) {
   const nameOf = Object.fromEntries((p.developers || []).map((d) => [d.userId, d.name]));
-  const groups = {};
-  for (const f of p.features) (groups[f.owner || '(未指派)'] ||= []).push(f);
-  return Object.entries(groups)
-    .map(([uid, feats]) => {
-      const dev = (p.developers || []).find((d) => d.userId === uid);
-      const meta = dev
-        ? `${dev.featureCount} feature${dev.verifiedCount ? ` · ${dev.verifiedCount} verified` : ''}${dev.breachCount ? ` · ⚠ ${dev.breachCount} 越界` : ''}`
-        : '';
-      const initial = esc((nameOf[uid] || uid).slice(0, 1).toUpperCase());
-      return `<div class="dev-head"><span class="avatar">${initial}</span><span class="dev-name">${esc(nameOf[uid] || uid)}</span><span class="dev-meta">${esc(meta)}</span></div>
-        <div class="grid">${feats.map(featureCard).join('')}</div>`;
+  return (p.milestones || [])
+    .map((m) => {
+      const tag =
+        m.status && m.id !== '__unassigned__' ? `<span class="ms-status st-${esc(m.status)}">${esc(m.status)}</span>` : '';
+      const body = m.features.length
+        ? `<div class="grid">${m.features.map((f) => featureCard(f, nameOf)).join('')}</div>`
+        : `<div class="ms-empty">无 feature</div>`;
+      return `<div class="ms-head"><span class="ms-diamond">◆</span><span class="ms-name">${esc(m.name)}</span>${tag}<span class="ms-count">${m.features.length} feature</span></div>${body}`;
     })
     .join('');
 }
@@ -81,7 +77,7 @@ function render(projects) {
           <span class="project-id">${esc(p.id)}</span>
           <span class="counts">${devCount} 人 · ${p.features.length} feature · ${verified} verified${breaches ? ` · ⚠ ${breaches} 越界` : ''}</span>
         </div>
-        ${p.features.length ? `<div class="section-label">Features（按开发者 · 事实驱动状态）</div>${devGroupsHtml(p)}` : ''}
+        ${(p.milestones || []).length ? `<div class="section-label">里程碑 ▸ feature（事实驱动状态）</div>${milestonesHtml(p)}` : ''}
         ${p.contracts.length ? `<div class="section-label">Contracts（测试驱动兑现）</div><div class="grid">${p.contracts.map(contractCard).join('')}</div>` : ''}
       </section>`;
     })

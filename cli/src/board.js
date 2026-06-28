@@ -34,29 +34,27 @@ export async function board(args) {
     console.log('(看板还是空的 —— 先 atlas register 一个 feature)');
     return;
   }
+  // 主结构：项目 ▸ 里程碑 ▸ feature(▸ 契约)；开发者作为 feature 上的标签
   for (const p of projects) {
-    console.log(`\n# ${p.name}  [${p.id}]`);
-    if (p.features.length === 0 && p.contracts.length === 0) {
+    const devCount = (p.developers || []).length;
+    console.log(`\n# ${p.name}  [${p.id}]  · ${devCount} 人`);
+    const milestones = p.milestones || [];
+    if (milestones.length === 0 && p.contracts.length === 0) {
       console.log('  (空)');
       continue;
     }
-    // 按开发者分组（"看全局所有开发人员"）
-    const nameOf = Object.fromEntries((p.developers || []).map((d) => [d.userId, d.name]));
-    const groups = {};
-    for (const f of p.features) (groups[f.owner || '(未指派)'] ||= []).push(f);
-    for (const [uid, feats] of Object.entries(groups)) {
-      const dev = (p.developers || []).find((d) => d.userId === uid);
-      const summary = dev
-        ? `${dev.featureCount} feature${dev.verifiedCount ? ` · ${dev.verifiedCount} verified` : ''}${dev.breachCount ? ` · ⚠ ${dev.breachCount} 越界` : ''}`
-        : '';
-      console.log(`  ▸ ${nameOf[uid] || uid}  ${summary}`);
-      for (const f of feats) {
+    for (const m of milestones) {
+      const tag = m.status && m.id !== '__unassigned__' ? ` (${m.status})` : '';
+      console.log(`  ◆ ${m.name}${tag}`);
+      if (!m.features.length) console.log('      (无 feature)');
+      for (const f of m.features) {
+        const who = f.owner ? `  @${f.owner}` : '';
         const flag = f.breach ? '  ⚠ 越界' : '';
-        console.log(`      ${ICON[f.status] || ' '} ${f.status.padEnd(11)} ${f.name}${flag}`);
+        console.log(`      ${ICON[f.status] || ' '} ${f.status.padEnd(11)} ${f.name}${who}${flag}`);
       }
     }
     if (p.contracts.length) {
-      console.log('  ▸ 契约');
+      console.log('  ◇ 契约');
       for (const c of p.contracts) {
         console.log(`      ${ICON[c.status] || ' '} ${c.status.padEnd(9)} ${c.name}`);
       }

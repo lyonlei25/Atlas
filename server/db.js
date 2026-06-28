@@ -69,6 +69,41 @@ class Store {
       .all(projectId);
   }
 
+  // --- Milestone（蓝图 05 骨架：Project → Milestone → Feature）---
+  upsertMilestone({ projectId, projectName, id, name, status }) {
+    this.ensureProject(projectId, projectName);
+    const mid = id || uid('ms');
+    const existing = this.db.prepare('SELECT id FROM milestones WHERE id=?').get(mid);
+    if (existing) {
+      this.db.prepare('UPDATE milestones SET name=?, status=? WHERE id=?').run(name || mid, status || 'open', mid);
+    } else {
+      this.db
+        .prepare('INSERT INTO milestones(id,project_id,name,status,created_at) VALUES(?,?,?,?,?)')
+        .run(mid, projectId, name || mid, status || 'open', now());
+    }
+    return this.getMilestone(mid);
+  }
+
+  // feature 引用了某 milestone 但它还不存在时，按 id 兜底建一个（避免 FK 失败）
+  ensureMilestone(projectId, id, name) {
+    if (!id) return null;
+    const row = this.db.prepare('SELECT id FROM milestones WHERE id=?').get(id);
+    if (!row) {
+      this.db
+        .prepare('INSERT INTO milestones(id,project_id,name,status,created_at) VALUES(?,?,?,?,?)')
+        .run(id, projectId, name || id, 'open', now());
+    }
+    return id;
+  }
+
+  getMilestone(id) {
+    return this.db.prepare('SELECT * FROM milestones WHERE id=?').get(id) || null;
+  }
+
+  listMilestones(projectId) {
+    return this.db.prepare('SELECT * FROM milestones WHERE project_id=? ORDER BY created_at').all(projectId);
+  }
+
   // --- 事实层：只追加 ---
   addFact({ projectId, subjectType, subjectId, kind, payload, actor }) {
     this.db
@@ -86,22 +121,24 @@ class Store {
   }
 
   // --- Feature ---
-  registerFeature({ projectId, projectName, id, name, declaredScope, acceptance, owner, userId, userName }) {
+  registerFeature({ projectId, projectName, id, name, declaredScope, acceptance, owner, userId, userName, milestoneId }) {
     this.ensureProject(projectId, projectName);
     owner = userId || owner; // owner 现在语义 = user_id
     this.recordUser({ projectId, userId: owner, userName });
+    if (milestoneId) this.ensureMilestone(projectId, milestoneId);
     const fid = id || uid('feat');
     const existing = this.db.prepare('SELECT id FROM features WHERE id=?').get(fid);
     if (existing) {
       this.db
         .prepare(
-          'UPDATE features SET name=?, declared_scope=?, acceptance=?, owner=?, status=?, breach=0, breach_detail=NULL, updated_at=? WHERE id=?'
+          'UPDATE features SET name=?, declared_scope=?, acceptance=?, owner=?, milestone_id=COALESCE(?, milestone_id), status=?, breach=0, breach_detail=NULL, updated_at=? WHERE id=?'
         )
         .run(
           name,
           JSON.stringify(declaredScope || []),
           acceptance || null,
           owner || null,
+          milestoneId || null,
           'registered',
           now(),
           fid
@@ -109,11 +146,12 @@ class Store {
     } else {
       this.db
         .prepare(
-          'INSERT INTO features(id,project_id,name,status,declared_scope,acceptance,owner,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)'
+          'INSERT INTO features(id,project_id,milestone_id,name,status,declared_scope,acceptance,owner,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?)'
         )
         .run(
           fid,
           projectId,
+          milestoneId || null,
           name || fid,
           'registered',
           JSON.stringify(declaredScope || []),
@@ -254,7 +292,18 @@ class Store {
       }
       const nameOf = Object.fromEntries(members.map((m) => [m.id, m.name]));
       const developers = Object.values(byDev).map((d) => ({ ...d, name: nameOf[d.userId] || d.userId }));
-      return { ...p, features, contracts, members, developers };
+      // 主结构：按里程碑嵌套 features（Project ▸ Milestone ▸ Feature）
+      const byMs = {};
+      for (const m of this.listMilestones(p.id))
+        byMs[m.id] = { id: m.id, name: m.name, status: m.status, features: [] };
+      const unassigned = { id: '__unassigned__', name: '未分配里程碑', status: null, features: [] };
+      for (const f of features) {
+        if (f.milestone_id && byMs[f.milestone_id]) byMs[f.milestone_id].features.push(f);
+        else unassigned.features.push(f);
+      }
+      const milestones = Object.values(byMs);
+      if (unassigned.features.length) milestones.push(unassigned);
+      return { ...p, features, milestones, contracts, members, developers };
     });
   }
 }

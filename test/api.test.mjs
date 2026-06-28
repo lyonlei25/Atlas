@@ -117,3 +117,25 @@ test('board 按开发者聚合（feature 数 / 越界数 / 展示名）', async 
   assert.equal(bob.breachCount, 1, '越界应计入该开发者');
   assert.equal(bob.name, 'Bob');
 });
+
+test('里程碑：create + register --milestone，board 按里程碑嵌套（Project▸Milestone▸Feature）', async () => {
+  await post('/api/milestones', { projectId: 'p2', id: 'M1', name: '里程碑一' });
+  await post('/api/features/f5/register', {
+    projectId: 'p2',
+    declaredScope: ['m/'],
+    userId: 'carol',
+    userName: 'Carol',
+    milestoneId: 'M1',
+  });
+  const { projects } = await get('/api/board');
+  const p2 = projects.find((p) => p.id === 'p2');
+  const ms = p2.milestones.find((m) => m.id === 'M1');
+  assert.ok(ms, '应有里程碑 M1');
+  assert.equal(ms.name, '里程碑一');
+  assert.ok(
+    ms.features.some((f) => f.id === 'f5'),
+    'feature 应嵌在里程碑下'
+  );
+  const un = p2.milestones.find((m) => m.id === '__unassigned__');
+  assert.ok(un && un.features.length >= 1, '未挂里程碑的 feature 进 unassigned 桶');
+});
