@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas 看板 · 共享大脑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+      <rect x="3" y="4" width="26" height="6" rx="2" fill="var(--c-fact)"/>
+      <rect x="3" y="13" width="26" height="6" rx="2" fill="var(--c-contract)"/>
+      <rect x="3" y="22" width="18" height="6" rx="2" fill="var(--c-say)"/>
+    </svg>
+    <div>
+      <div class="brand-name">Atlas 看板</div>
+      <div class="brand-sub">共享大脑 · 全局事实状态</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="legend"><i class="dot fact"></i>事实驱动</span>
+    <span class="legend"><i class="dot contract"></i>契约</span>
+    <span class="legend"><i class="dot danger"></i>越界标红</span>
+    <a class="docs-link" href="/docs" target="_blank">设计蓝图 ↗</a>
+    <span id="pulse" class="pulse" title="自动刷新中"></span>
+  </div>
+</header>
+
+<main class="wrap" id="board"><!-- injected --></main>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-inner">
+    <button class="drawer-close" id="drawerClose">×</button>
+    <div id="drawerBody"></div>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<footer class="foot">控制点放在 Agent 外面 · 状态由事实翻牌，不由自陈</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

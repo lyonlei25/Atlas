@@ -1,0 +1,93 @@
+<svg viewBox="0 0 1000 720" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrFact" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="720" fill="#fafafa"/>
+  <text x="500" y="40" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">AI-Native 工程治理总览</text>
+  <text x="500" y="64" text-anchor="middle" font-size="13" fill="#64748b">三层治理 × 共享大脑(看板)× 三级可信度</text>
+
+  <!-- LEFT: three governance layers -->
+  <text x="60" y="108" font-size="14" font-weight="700" fill="#475569">三层治理（按节奏分）</text>
+
+  <!-- L1 -->
+  <rect x="60" y="120" width="360" height="80" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="78" y="146" font-size="15" font-weight="700" fill="#1e40af">L1 项目级 · 长期不变</text>
+  <text x="78" y="168" font-size="12" fill="#1e3a5f">通用规则 / Git 规范 / 全局约束</text>
+  <text x="78" y="188" font-size="12" fill="#1e3a5f">防漂移 → 能机器强制的就不写进文档</text>
+
+  <!-- L2 -->
+  <rect x="60" y="212" width="360" height="80" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="78" y="238" font-size="15" font-weight="700" fill="#15803d">L2 里程碑级 · 一段时间冻结</text>
+  <text x="78" y="260" font-size="12" fill="#14532d">需求讨论完 + feature 拆完才进场（瀑布）</text>
+  <text x="78" y="280" font-size="12" fill="#14532d">防范围蔓延 → 范围焊死，只能填不能扩</text>
+
+  <!-- L3 -->
+  <rect x="60" y="304" width="360" height="96" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+  <text x="78" y="330" font-size="15" font-weight="700" fill="#c2410c">L3 Feature 级 · 单 Session</text>
+  <text x="78" y="352" font-size="12" fill="#7c2d12">范围=硬锚（上层焊）· 实现=软（session 评估）</text>
+  <text x="78" y="372" font-size="12" fill="#7c2d12">防引入外来问题 → 撞线必停 / 越界必声明</text>
+  <text x="78" y="391" font-size="12" fill="#7c2d12">用事实审，不靠自陈</text>
+
+  <!-- module decoupling -->
+  <rect x="60" y="430" width="360" height="86" rx="10" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="78" y="456" font-size="15" font-weight="700" fill="#7e22ce">模块解耦（横切 L3）</text>
+  <text x="78" y="478" font-size="12" fill="#581c87">每模块独立 agents.md · 业务对接口编程</text>
+  <text x="78" y="498" font-size="12" fill="#581c87">占位符顶替 · 契约测试通过才替换</text>
+
+  <!-- arrows between layers -->
+  <line x1="240" y1="200" x2="240" y2="212" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="240" y1="292" x2="240" y2="304" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="240" y1="400" x2="240" y2="430" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- RIGHT: the board / shared brain -->
+  <text x="560" y="108" font-size="14" font-weight="700" fill="#475569">看板 = Agent 共享大脑</text>
+  <rect x="560" y="120" width="380" height="396" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- three credibility tiers -->
+  <rect x="582" y="142" width="336" height="96" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="600" y="166" font-size="13" font-weight="700" fill="#15803d">① 事实层（无条件可信）</text>
+  <text x="600" y="186" font-size="11.5" fill="#14532d">• 实际 diff（改了什么）</text>
+  <text x="600" y="204" font-size="11.5" fill="#14532d">• 状态：测试 / CI 结果驱动</text>
+  <text x="600" y="222" font-size="11.5" fill="#14532d">→ Agent 改不动，骗不了</text>
+
+  <rect x="582" y="248" width="336" height="92" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="600" y="272" font-size="13" font-weight="700" fill="#1d4ed8">② 契约层（高可信 · 有测试兜底）</text>
+  <text x="600" y="292" font-size="11.5" fill="#1e3a8a">• 接口契约 = 可执行的契约测试</text>
+  <text x="600" y="310" font-size="11.5" fill="#1e3a8a">• 一旦与实现裂开就报红</text>
+  <text x="600" y="328" font-size="11.5" fill="#1e3a8a">→ 撒谎当场被抓</text>
+
+  <rect x="582" y="350" width="336" height="96" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="600" y="374" font-size="13" font-weight="700" fill="#b45309">③ 说法层（参考 · 必然漂移）</text>
+  <text x="600" y="394" font-size="11.5" fill="#78350f">• 设计理由 / 经验 / 注意事项</text>
+  <text x="600" y="412" font-size="11.5" fill="#78350f">• 必须挂出处+时间，旧的自动贬值</text>
+  <text x="600" y="430" font-size="11.5" fill="#78350f">→ 当线索，不当真理</text>
+
+  <!-- contrast bar -->
+  <rect x="582" y="460" width="336" height="42" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="750" y="479" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">底座越靠①②，库越不烂</text>
+  <text x="750" y="495" text-anchor="middle" font-size="11" fill="#64748b">不让会过期的③冒充永远正确的①</text>
+
+  <!-- arrows: layers write facts into board -->
+  <path d="M420 360 C 480 360, 500 300, 560 300" fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrFact)"/>
+  <text x="455" y="318" font-size="10.5" fill="#16a34a" font-weight="600">交 diff/状态</text>
+
+  <path d="M420 472 C 490 472, 500 400, 560 400" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arr)"/>
+  <text x="452" y="455" font-size="10.5" fill="#7e22ce" font-weight="600">注册契约</text>
+
+  <!-- board reads back to agents -->
+  <path d="M560 230 C 500 230, 490 250, 430 470" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="486" y="240" font-size="10.5" fill="#64748b" font-weight="600">读共享现实</text>
+
+  <!-- bottom principle -->
+  <rect x="60" y="548" width="880" height="140" rx="12" fill="#0f172a"/>
+  <text x="500" y="582" text-anchor="middle" font-size="16" font-weight="700" fill="#f8fafc">一条贯穿原则</text>
+  <text x="500" y="612" text-anchor="middle" font-size="14" fill="#e2e8f0">控制点全部放在 Agent 外面 —— 它内部不可控，但它能祸害的范围、以及你能否收拾，都在外面</text>
+  <text x="500" y="640" text-anchor="middle" font-size="14" fill="#e2e8f0">共享的 / 别人依赖的 / 撤不回的东西 → 放进谁都改不动的地方，用「事实」而非「自陈」驱动状态</text>
+  <text x="500" y="668" text-anchor="middle" font-size="13" fill="#94a3b8">不赌 Agent 不犯错，赌系统接得住它犯错</text>
+</svg>

@@ -1,0 +1,16 @@
+node_modules/
+*.log
+
+# Atlas server local state (the shared brain DB lives on the server, not in git)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+atlas.db*
+
+# Atlas local "current feature" state (set by `atlas register`)
+.atlas/
+
+# scratch
+.DS_Store
+.tmp/

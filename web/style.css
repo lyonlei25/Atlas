@@ -1,0 +1,105 @@
+/* Atlas 看板 —— 沿用蓝图设计系统：冷静工程蓝灰 + 三语义锚点(事实绿/契约蓝/说法橙) */
+:root{
+  --bg:#f7f8fa; --bg-deep:#eef1f5; --surface:#ffffff;
+  --rail:#0f1722; --rail-2:#16202e;
+  --ink:#1a2230; --ink-soft:#4a5567; --ink-faint:#8893a4;
+  --line:#e3e7ee; --line-soft:#eef1f5;
+  --c-fact:#16a34a; --c-fact-bg:#e7f6ec;
+  --c-contract:#2563eb; --c-contract-bg:#e6effd;
+  --c-say:#d97706; --c-say-bg:#fdf1dd;
+  --c-agent:#ea7317;
+  --c-danger:#dc2626; --c-danger-bg:#fdeaea;
+  --accent:#4f46e5;
+  --radius:14px; --radius-sm:9px;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --sans:'Noto Sans SC',-apple-system,'Segoe UI',Roboto,sans-serif;
+  --shadow-sm:0 1px 2px rgba(15,23,34,.05),0 1px 3px rgba(15,23,34,.04);
+  --shadow-md:0 4px 14px rgba(15,23,34,.07),0 2px 6px rgba(15,23,34,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* topbar */
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:linear-gradient(180deg,var(--rail),var(--rail-2));color:#fff;box-shadow:var(--shadow-md)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.3px}
+.brand-sub{font-size:12px;color:#9fb0c4;font-family:var(--mono)}
+.topbar-right{display:flex;align-items:center;gap:16px;font-size:12.5px;color:#c4cedd}
+.legend{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dot.fact{background:var(--c-fact)} .dot.contract{background:var(--c-contract)} .dot.danger{background:var(--c-danger)}
+.docs-link{color:#c4cedd;text-decoration:none;border:1px solid #2c3a4d;padding:4px 10px;border-radius:8px}
+.docs-link:hover{background:#1c2a3c;color:#fff}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--c-fact);box-shadow:0 0 0 0 rgba(22,163,74,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+
+.wrap{max-width:1080px;margin:0 auto;padding:30px 24px 60px}
+
+/* project */
+.project{margin-bottom:34px}
+.project-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+.project-name{font-size:19px;font-weight:700}
+.project-id{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+.counts{margin-left:auto;font-size:12.5px;color:var(--ink-soft);font-family:var(--mono)}
+
+.section-label{font-size:11.5px;font-weight:700;letter-spacing:.8px;color:var(--ink-faint);text-transform:uppercase;margin:6px 0 10px}
+
+/* cards grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:13px;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow-sm);cursor:pointer;transition:.14s;position:relative;overflow:hidden}
+.card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.card.breach{border-color:var(--c-danger);background:var(--c-danger-bg)}
+.card .accent-edge{position:absolute;left:0;top:0;bottom:0;width:4px}
+
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.card-name{font-weight:600;font-size:14.5px;flex:1;min-width:0}
+.status{font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.st-registered{background:var(--bg-deep);color:var(--ink-soft)}
+.st-submitted{background:var(--c-say-bg);color:var(--c-say)}
+.st-verified{background:var(--c-fact-bg);color:var(--c-fact)}
+.st-fulfilled{background:var(--c-fact-bg);color:var(--c-fact)}
+.st-drafted{background:var(--c-contract-bg);color:var(--c-contract)}
+.st-broken{background:var(--c-danger-bg);color:var(--c-danger)}
+
+.scope{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);line-height:1.6;word-break:break-all}
+.scope-label{color:var(--ink-faint)}
+.breach-flag{margin-top:9px;font-size:12px;color:var(--c-danger);font-weight:600;display:flex;align-items:center;gap:5px}
+.breach-detail{font-family:var(--mono);font-size:11px;color:var(--c-danger);margin-top:3px;word-break:break-all}
+.owner{font-size:11px;color:var(--ink-faint);margin-top:8px;font-family:var(--mono)}
+
+.empty{color:var(--ink-faint);font-size:14px;padding:50px 0;text-align:center}
+.empty code{font-family:var(--mono);background:var(--bg-deep);padding:2px 6px;border-radius:5px}
+
+/* contract card edge = blue */
+.card.contract .accent-edge{background:var(--c-contract)}
+.card.feature .accent-edge{background:var(--c-agent)}
+.card.feature.verified .accent-edge{background:var(--c-fact)}
+.card.breach .accent-edge{background:var(--c-danger)}
+
+/* drawer (feature detail / fact timeline) */
+.scrim{position:fixed;inset:0;background:rgba(15,23,34,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,92vw);background:var(--surface);
+  box-shadow:-8px 0 30px rgba(15,23,34,.18);transform:translateX(100%);transition:.24s cubic-bezier(.4,0,.2,1);z-index:50;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-inner{padding:26px 26px 50px}
+.drawer-close{position:absolute;top:16px;right:18px;border:none;background:var(--bg-deep);width:32px;height:32px;border-radius:8px;font-size:20px;cursor:pointer;color:var(--ink-soft)}
+.drawer-close:hover{background:var(--line)}
+.d-title{font-size:18px;font-weight:700;margin-bottom:4px;padding-right:30px}
+.d-id{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-bottom:16px}
+.d-row{display:flex;gap:10px;margin-bottom:10px;font-size:13.5px}
+.d-row b{color:var(--ink-soft);font-weight:600;min-width:64px}
+.fact{border-left:2px solid var(--line);padding:10px 0 10px 16px;margin-left:6px;position:relative}
+.fact::before{content:'';position:absolute;left:-5px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--c-fact)}
+.fact.kind-compare::before{background:var(--c-say)} .fact.kind-test_result::before{background:var(--c-contract)}
+.fact-kind{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink)}
+.fact-meta{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)}
+.fact-payload{font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:var(--bg-deep);border-radius:6px;padding:6px 8px;margin-top:6px;white-space:pre-wrap;word-break:break-all;max-height:160px;overflow:auto}
+
+.foot{text-align:center;color:var(--ink-faint);font-size:12.5px;padding:24px;border-top:1px solid var(--line)}
+
+@media(max-width:560px){
+  .topbar-right .legend{display:none}
+  .wrap{padding:20px 14px 50px}
+}

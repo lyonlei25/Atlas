@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Native 工程治理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- top reading progress -->
+<div class="readbar"><div class="readbar-fill" id="readbarFill"></div></div>
+
+<!-- mobile header -->
+<header class="mobile-head">
+  <button class="burger" id="burger" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-title">AI-Native 治理</div>
+</header>
+
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="rail" id="rail">
+    <div class="rail-inner">
+      <a href="#home" class="brand" data-link>
+        <div class="brand-mark">
+          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+            <rect x="3" y="4" width="26" height="6" rx="2" fill="var(--c-fact)"/>
+            <rect x="3" y="13" width="26" height="6" rx="2" fill="var(--c-contract)"/>
+            <rect x="3" y="22" width="18" height="6" rx="2" fill="var(--c-say)"/>
+          </svg>
+        </div>
+        <div class="brand-txt">
+          <div class="brand-name">AI-Native 治理</div>
+          <div class="brand-sub">工程蓝图 · v1</div>
+        </div>
+      </a>
+
+      <nav class="nav" id="nav"><!-- injected --></nav>
+
+      <div class="rail-foot">
+        <div class="foot-line">控制点放在 Agent 外面</div>
+        <div class="foot-sub">用事实，不用自陈</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main" id="main">
+    <article class="doc" id="doc"><!-- injected --></article>
+
+    <!-- prev / next -->
+    <nav class="pager" id="pager"></nav>
+
+    <footer class="page-foot">
+      <span>AI-Native 工程治理蓝图</span>
+      <span class="dot">·</span>
+      <span>讲架构、原则、决策，不绑技术栈</span>
+    </footer>
+  </main>
+
+  <!-- ============ TOC (right, on wide screens) ============ -->
+  <aside class="toc" id="toc"></aside>
+
+</div>
+
+<script src="content.js"></script>
+<script src="md.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

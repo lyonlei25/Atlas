@@ -1,0 +1,15 @@
+{
+  "//": "Atlas: 收工自动抓真实 diff 交服务端比对——事实源不依赖 Agent 自觉上报。需要 atlas 在 PATH 上(在 Atlas 仓库 npm link，或设 alias)。已存在 .claude/settings.json 时 atlas init 不会覆盖，请手动合并 hooks。",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f .atlas/current ] && atlas submit >/dev/null 2>&1; true"
+          }
+        ]
+      }
+    ]
+  }
+}

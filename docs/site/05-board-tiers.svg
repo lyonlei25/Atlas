@@ -1,0 +1,42 @@
+<svg viewBox="0 0 920 600" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <rect x="0" y="0" width="920" height="600" fill="#fafafa"/>
+  <text x="460" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">看板 = 分层可信的共享现实</text>
+  <text x="460" y="60" text-anchor="middle" font-size="13" fill="#64748b">不让会过期的「说法」冒充永远正确的「事实」</text>
+
+  <!-- structure: project > milestone > feature -->
+  <text x="60" y="96" font-size="14" font-weight="700" fill="#475569">骨架结构</text>
+  <rect x="60" y="106" width="800" height="44" rx="8" fill="#0f172a"/>
+  <text x="78" y="133" font-size="13" font-weight="700" fill="#f8fafc">Project</text>
+  <text x="170" y="133" font-size="12" fill="#cbd5e1">└ Milestone（里程碑）  └ Feature 列表  └ 接口契约</text>
+
+  <!-- tier 1 -->
+  <rect x="60" y="166" width="800" height="118" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="92" cy="196" r="14" fill="#16a34a"/>
+  <text x="92" y="201" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">1</text>
+  <text x="118" y="192" font-size="15" font-weight="700" fill="#15803d">事实层 — 无条件可信，Agent 改不动</text>
+  <text x="118" y="214" font-size="12" fill="#14532d">数据来源：实际 diff、测试结果、CI 状态、操作痕迹</text>
+  <text x="118" y="236" font-size="12" fill="#14532d">承载：feature 状态流转（由测试驱动翻牌）、改了哪些文件、声称vs实际的比对结果</text>
+  <rect x="118" y="248" width="724" height="28" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1"/>
+  <text x="130" y="267" font-size="11.5" font-weight="600" fill="#15803d">关键：这层不靠 Agent「描述」，直接从它的操作自动抽取 → 它想美化也美化不了</text>
+
+  <!-- tier 2 -->
+  <rect x="60" y="296" width="800" height="118" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <circle cx="92" cy="326" r="14" fill="#2563eb"/>
+  <text x="92" y="331" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">2</text>
+  <text x="118" y="322" font-size="15" font-weight="700" fill="#1d4ed8">契约层 — 高可信，有测试兜底</text>
+  <text x="118" y="344" font-size="12" fill="#1e3a8a">承载：模块对外接口契约，做成「可执行」而非纯文字</text>
+  <text x="118" y="366" font-size="12" fill="#1e3a8a">机制：契约一旦与实现裂开 → 测试报红 → 立刻暴露</text>
+  <rect x="118" y="378" width="724" height="28" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="130" y="397" font-size="11.5" font-weight="600" fill="#1d4ed8">关键：契约越「可执行」越不会撒谎；越「纯文字」越会漂移成谎言 → 拼命往可执行拉</text>
+
+  <!-- tier 3 -->
+  <rect x="60" y="426" width="800" height="130" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <circle cx="92" cy="456" r="14" fill="#d97706"/>
+  <text x="92" y="461" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">3</text>
+  <text x="118" y="452" font-size="15" font-weight="700" fill="#b45309">说法层 — 仅参考，必然漂移</text>
+  <text x="118" y="474" font-size="12" fill="#78350f">承载：wiki 里的设计理由、经验、踩坑提示（机器验证不了）</text>
+  <text x="118" y="496" font-size="12" fill="#78350f">约束：① 必须挂出处+时间　② 当线索不当真理　③ 旧的自动贬低可信度</text>
+  <rect x="118" y="508" width="724" height="38" rx="6" fill="#ffffff" stroke="#fcd34d" stroke-width="1"/>
+  <text x="130" y="525" font-size="11.5" font-weight="600" fill="#b45309">关键：会传染！A 写歪 → B 当真 → C 更歪。必须可溯源到对应 diff，</text>
+  <text x="130" y="541" font-size="11.5" font-weight="600" fill="#b45309">连不回任何事实的说法 = 最低可信度的传言，不是定论</text>
+</svg>

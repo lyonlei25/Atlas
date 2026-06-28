@@ -1,0 +1,18 @@
+{
+  "name": "atlas",
+  "version": "0.1.0",
+  "description": "AI-Native 工程治理工具包 —— 把控制点放在 Agent 外面，用事实而非自陈驱动状态。跨 Claude Code / Codex，可嵌入任意工程。",
+  "type": "module",
+  "bin": {
+    "atlas": "cli/bin/atlas.js"
+  },
+  "scripts": {
+    "server": "node server/server.js",
+    "test": "node --test --no-warnings"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "license": "MIT",
+  "private": true
+}

@@ -1,0 +1,61 @@
+<svg viewBox="0 0 980 460" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="980" height="460" fill="#fafafa"/>
+  <text x="490" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">L2 里程碑 · 想与做在时间上切开</text>
+  <text x="490" y="62" text-anchor="middle" font-size="13" fill="#64748b">人主导「想」→ 范围焊死 → Agent 才进场「做」</text>
+
+  <!-- THINK phase (human) -->
+  <rect x="40" y="90" width="430" height="320" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+  <text x="60" y="118" font-size="15" font-weight="700" fill="#15803d">① 想 · 人主导（Agent 不进场）</text>
+
+  <rect x="62" y="134" width="386" height="56" rx="8" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="156" font-size="13" font-weight="600" fill="#14532d">需求充分讨论</text>
+  <text x="80" y="176" font-size="11.5" fill="#3f6212">把要做什么彻底谈清楚，边界明确</text>
+
+  <rect x="62" y="200" width="386" height="56" rx="8" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="222" font-size="13" font-weight="600" fill="#14532d">Feature 拆分完毕</text>
+  <text x="80" y="242" font-size="11.5" fill="#3f6212">拆成一个个边界清晰的盒子</text>
+
+  <rect x="62" y="266" width="386" height="56" rx="8" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <text x="80" y="288" font-size="13" font-weight="600" fill="#14532d">每个 Feature 焊好「范围 + 验收标准」</text>
+  <text x="80" y="308" font-size="11.5" fill="#3f6212">= L3 的硬锚（Agent 改不动）</text>
+
+  <rect x="62" y="332" width="386" height="56" rx="8" fill="#ecfdf5" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="80" y="354" font-size="13" font-weight="600" fill="#15803d">识别共享依赖 → 约定接口契约</text>
+  <text x="80" y="374" font-size="11.5" fill="#3f6212">注册进看板（独立于 session 存在）</text>
+
+  <!-- freeze gate -->
+  <rect x="488" y="210" width="58" height="80" rx="6" fill="#0f172a"/>
+  <text x="517" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#f8fafc">范围</text>
+  <text x="517" y="258" text-anchor="middle" font-size="12" font-weight="700" fill="#f8fafc">冻结</text>
+  <text x="517" y="276" text-anchor="middle" font-size="16" fill="#fbbf24">🔒</text>
+  <line x1="470" y1="250" x2="488" y2="250" stroke="#475569" stroke-width="2" marker-end="url(#a2)"/>
+  <line x1="546" y1="250" x2="566" y2="250" stroke="#475569" stroke-width="2" marker-end="url(#a2)"/>
+
+  <!-- DO phase (agent) -->
+  <rect x="566" y="90" width="380" height="320" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+  <text x="586" y="118" font-size="15" font-weight="700" fill="#c2410c">② 做 · Agent 进场</text>
+  <text x="586" y="140" font-size="12" fill="#7c2d12">范围已焊死，只能往里填，不能往外扩</text>
+
+  <rect x="588" y="156" width="336" height="48" rx="8" fill="#ffffff" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="606" y="185" font-size="12.5" fill="#7c2d12">Feature A → 一个 Agent session（见 L3）</text>
+
+  <rect x="588" y="214" width="336" height="48" rx="8" fill="#ffffff" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="606" y="243" font-size="12.5" fill="#7c2d12">Feature B → 并行 session</text>
+
+  <rect x="588" y="272" width="336" height="48" rx="8" fill="#ffffff" stroke="#fdba74" stroke-width="1.5"/>
+  <text x="606" y="301" font-size="12.5" fill="#7c2d12">基础模块 → 实现契约</text>
+
+  <!-- feedback loop -->
+  <rect x="588" y="332" width="336" height="58" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="606" y="354" font-size="12.5" font-weight="600" fill="#b91c1c">开发中发现「超出范围」的东西？</text>
+  <text x="606" y="374" font-size="11.5" fill="#7f1d1d">不当场做 → 吐回看板成下一轮输入</text>
+
+  <!-- loop arrow back -->
+  <path d="M756 390 C 756 425, 255 425, 255 410" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#a2)"/>
+  <text x="505" y="445" text-anchor="middle" font-size="11.5" fill="#b91c1c" font-weight="600">范围蔓延 → 不吞掉，回到「想」阶段重新决策</text>
+</svg>
