@@ -118,6 +118,23 @@ test('board 按开发者聚合（feature 数 / 越界数 / 展示名）', async 
   assert.equal(bob.name, 'Bob');
 });
 
+test('项目层信息：set goal/wiki，board 带进度汇总', async () => {
+  await post('/api/projects', { projectId: 'p1', goal: '目标X', wiki: 'wikiY' });
+  const { projects } = await get('/api/board');
+  const p = projects.find((x) => x.id === 'p1');
+  assert.equal(p.goal, '目标X');
+  assert.equal(p.wiki, 'wikiY');
+  assert.ok(p.progress && typeof p.progress.pct === 'number', '项目应带 progress 汇总');
+});
+
+test('里程碑带 goal 且有进度汇总', async () => {
+  await post('/api/milestones', { projectId: 'p1', id: 'MX', name: '里程碑X', goal: '里目标' });
+  const { projects } = await get('/api/board');
+  const m = projects.find((x) => x.id === 'p1').milestones.find((x) => x.id === 'MX');
+  assert.equal(m.goal, '里目标');
+  assert.ok(m.progress && typeof m.progress.pct === 'number');
+});
+
 test('里程碑：create + register --milestone，board 按里程碑嵌套（Project▸Milestone▸Feature）', async () => {
   await post('/api/milestones', { projectId: 'p2', id: 'M1', name: '里程碑一' });
   await post('/api/features/f5/register', {

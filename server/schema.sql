@@ -9,6 +9,8 @@
 CREATE TABLE IF NOT EXISTS projects (
   id          TEXT PRIMARY KEY,
   name        TEXT NOT NULL,
+  goal        TEXT,              -- 项目目标（项目层展示）
+  wiki        TEXT,              -- 项目 wiki/说明（项目层展示）
   created_at  TEXT NOT NULL
 );
 
@@ -33,6 +35,7 @@ CREATE TABLE IF NOT EXISTS milestones (
   id          TEXT PRIMARY KEY,
   project_id  TEXT NOT NULL REFERENCES projects(id),
   name        TEXT NOT NULL,
+  goal        TEXT,                           -- 里程碑目标（里程碑层展示）
   status      TEXT NOT NULL DEFAULT 'open',   -- open | frozen | done
   created_at  TEXT NOT NULL
 );

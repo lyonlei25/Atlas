@@ -4,19 +4,21 @@ import { loadConfig, api } from './api.js';
 export async function milestone(args, sub) {
   const cfg = loadConfig();
 
-  if (sub === 'create') {
+  if (sub === 'create' || sub === 'set') {
     const id = args.id;
-    if (!id) throw new Error('用法: atlas milestone create --id <mid> [--name "..."] [--status open|frozen|done]');
+    if (!id) throw new Error('用法: atlas milestone create --id <mid> [--name "..."] [--goal "..."] [--status open|frozen|done]');
     const { milestone } = await api.post(cfg, '/api/milestones', {
       projectId: cfg.projectId,
       projectName: cfg.projectName,
       id,
-      name: args.name || id,
+      name: args.name,
+      goal: args.goal,
       status: args.status,
       userId: cfg.userId,
       userName: cfg.userName,
     });
     console.log(`✓ 里程碑已登记  [${cfg.projectId}] ${milestone.id}  ${milestone.name}  (${milestone.status})`);
+    if (milestone.goal) console.log(`  目标: ${milestone.goal}`);
     return milestone;
   }
 

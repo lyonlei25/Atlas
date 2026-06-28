@@ -12,6 +12,18 @@ export function openDb(file = join(__dirname, 'atlas.db')) {
   const db = new DatabaseSync(file);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(readFileSync(join(__dirname, 'schema.sql'), 'utf8'));
+  // 轻量迁移：给老库补列（新库 schema.sql 已含，这里会抛 duplicate column，忽略即可）
+  for (const sql of [
+    'ALTER TABLE projects ADD COLUMN goal TEXT',
+    'ALTER TABLE projects ADD COLUMN wiki TEXT',
+    'ALTER TABLE milestones ADD COLUMN goal TEXT',
+  ]) {
+    try {
+      db.exec(sql);
+    } catch {
+      /* 列已存在 */
+    }
+  }
   return new Store(db);
 }
 
@@ -29,6 +41,15 @@ class Store {
         .run(id, name || id, now());
     }
     return id;
+  }
+
+  // 项目层信息（目标 / wiki）。COALESCE：没传的字段不覆盖。
+  upsertProject({ id, name, goal, wiki }) {
+    this.ensureProject(id, name);
+    this.db
+      .prepare('UPDATE projects SET name=COALESCE(?,name), goal=COALESCE(?,goal), wiki=COALESCE(?,wiki) WHERE id=?')
+      .run(name ?? null, goal ?? null, wiki ?? null, id);
+    return this.db.prepare('SELECT * FROM projects WHERE id=?').get(id);
   }
 
   // --- 身份层（M1）：无鉴权，首次见到即 upsert ---
@@ -70,16 +91,18 @@ class Store {
   }
 
   // --- Milestone（蓝图 05 骨架：Project → Milestone → Feature）---
-  upsertMilestone({ projectId, projectName, id, name, status }) {
+  upsertMilestone({ projectId, projectName, id, name, status, goal }) {
     this.ensureProject(projectId, projectName);
     const mid = id || uid('ms');
     const existing = this.db.prepare('SELECT id FROM milestones WHERE id=?').get(mid);
     if (existing) {
-      this.db.prepare('UPDATE milestones SET name=?, status=? WHERE id=?').run(name || mid, status || 'open', mid);
+      this.db
+        .prepare('UPDATE milestones SET name=COALESCE(?,name), goal=COALESCE(?,goal), status=COALESCE(?,status) WHERE id=?')
+        .run(name ?? null, goal ?? null, status ?? null, mid);
     } else {
       this.db
-        .prepare('INSERT INTO milestones(id,project_id,name,status,created_at) VALUES(?,?,?,?,?)')
-        .run(mid, projectId, name || mid, status || 'open', now());
+        .prepare('INSERT INTO milestones(id,project_id,name,goal,status,created_at) VALUES(?,?,?,?,?,?)')
+        .run(mid, projectId, name || mid, goal || null, status || 'open', now());
     }
     return this.getMilestone(mid);
   }
@@ -295,15 +318,17 @@ class Store {
       // 主结构：按里程碑嵌套 features（Project ▸ Milestone ▸ Feature）
       const byMs = {};
       for (const m of this.listMilestones(p.id))
-        byMs[m.id] = { id: m.id, name: m.name, status: m.status, features: [] };
-      const unassigned = { id: '__unassigned__', name: '未分配里程碑', status: null, features: [] };
+        byMs[m.id] = { id: m.id, name: m.name, goal: m.goal, status: m.status, features: [] };
+      const unassigned = { id: '__unassigned__', name: '未分配里程碑', goal: null, status: null, features: [] };
       for (const f of features) {
         if (f.milestone_id && byMs[f.milestone_id]) byMs[f.milestone_id].features.push(f);
         else unassigned.features.push(f);
       }
       const milestones = Object.values(byMs);
       if (unassigned.features.length) milestones.push(unassigned);
-      return { ...p, features, milestones, contracts, members, developers };
+      // 进度由事实自动汇总：feature(verified) → 里程碑 → 项目
+      for (const m of milestones) m.progress = progressOf(m.features);
+      return { ...p, features, milestones, contracts, members, developers, progress: progressOf(features) };
     });
   }
 }
@@ -324,4 +349,12 @@ function safeParse(s) {
   } catch {
     return s;
   }
+}
+
+// 进度汇总（事实驱动）：verified 占比 + 越界数
+function progressOf(feats) {
+  const total = feats.length;
+  const verified = feats.filter((f) => f.status === 'verified').length;
+  const breach = feats.filter((f) => f.breach).length;
+  return { total, verified, breach, pct: total ? Math.round((verified / total) * 100) : 0 };
 }

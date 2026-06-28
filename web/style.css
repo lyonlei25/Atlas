@@ -113,3 +113,56 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1
   .topbar-right .legend{display:none}
   .wrap{padding:20px 14px 50px}
 }
+
+/* ============ 下钻分层视图（M1.6） ============ */
+.crumb{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-bottom:16px}
+.crumb a{color:var(--accent);text-decoration:none}
+.crumb a:hover{text-decoration:underline}
+.crumb b{color:var(--ink);font-weight:600}
+.crumb .sep{margin:0 6px;color:var(--ink-faint)}
+
+.vhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vh{font-size:22px;font-weight:700;margin:0 0 2px}
+.vh .dia{color:var(--c-contract)}
+
+.bar{height:6px;border-radius:6px;background:var(--bg-deep);overflow:hidden;margin:12px 0 18px;max-width:420px}
+.bar>span{display:block;height:100%;background:var(--accent)}
+
+.info{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:14px;line-height:1.6;margin-bottom:22px;max-width:760px}
+.info .k{color:var(--ink-faint);white-space:nowrap}
+.info .mono{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);word-break:break-all}
+
+.sec{font-size:11.5px;font-weight:700;letter-spacing:.8px;color:var(--ink-faint);text-transform:uppercase;margin:8px 0 12px}
+
+.list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow-sm);transition:.14s}
+.row:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);border-color:#d6dbe6}
+.row.static{cursor:default}
+.row.static:hover{transform:none;box-shadow:var(--shadow-sm)}
+.row.breach{border-color:var(--c-danger);background:var(--c-danger-bg)}
+.row-main{flex:1;min-width:0}
+.row-title{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row-title .dia{color:var(--c-contract)}
+.row-sub{font-size:12.5px;color:var(--ink-soft);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);white-space:nowrap;display:flex;align-items:center;gap:8px}
+.who{display:inline-flex;align-items:center;gap:5px;color:var(--ink-soft)}
+
+.pill{font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.st-open{background:var(--bg-deep);color:var(--ink-soft)}
+.st-frozen{background:var(--c-contract-bg);color:var(--c-contract)}
+.st-done{background:var(--c-fact-bg);color:var(--c-fact)}
+.flag{font-size:11px;color:var(--c-danger);font-weight:600}
+
+/* feature 进展时间线 */
+.timeline{margin-bottom:22px}
+.ev{display:flex;gap:12px;padding:9px 0 9px 4px;position:relative}
+.ev-dot{width:9px;height:9px;border-radius:50%;background:var(--ink-faint);margin-top:5px;flex:0 0 9px}
+.ev-good .ev-dot{background:var(--c-fact)}
+.ev-bad .ev-dot{background:var(--c-danger)}
+.ev-text{font-size:14px;color:var(--ink)}
+.ev-bad .ev-text{color:var(--c-danger);font-weight:600}
+.ev-meta{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:2px}
+
+.tech{margin-top:6px;border-top:1px solid var(--line);padding-top:12px}
+.tech summary{font-size:12.5px;color:var(--ink-faint);cursor:pointer}
+.tech pre{font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:var(--bg-deep);border-radius:8px;padding:12px;margin-top:10px;white-space:pre-wrap;word-break:break-all;max-height:340px;overflow:auto}

@@ -120,9 +120,24 @@ const server = createServer(async (req, res) => {
           id: b.id,
           name: b.name,
           status: b.status,
+          goal: b.goal,
         });
         store.recordUser({ projectId: b.projectId, userId: b.userId, userName: b.userName });
         return send(res, 200, { milestone: ms });
+      }
+
+      // POST /api/projects —— 设项目层信息（目标 / wiki），项目层不再是空壳
+      if (method === 'POST' && path === '/api/projects') {
+        const b = await readBody(req);
+        if (!b.projectId && !b.id) return send(res, 400, { error: 'projectId required' });
+        const project = store.upsertProject({
+          id: b.projectId || b.id,
+          name: b.name,
+          goal: b.goal,
+          wiki: b.wiki,
+        });
+        store.recordUser({ projectId: project.id, userId: b.userId, userName: b.userName });
+        return send(res, 200, { project });
       }
 
       // POST /api/features/:id/submit  —— 收事实，服务端比对

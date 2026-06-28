@@ -12,7 +12,7 @@
 <body>
 
 <header class="topbar">
-  <div class="brand">
+  <a class="brand" href="#/">
     <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
       <rect x="3" y="4" width="26" height="6" rx="2" fill="var(--c-fact)"/>
       <rect x="3" y="13" width="26" height="6" rx="2" fill="var(--c-contract)"/>
@@ -20,30 +20,19 @@
     </svg>
     <div>
       <div class="brand-name">Atlas 看板</div>
-      <div class="brand-sub">共享大脑 · 全局事实状态</div>
+      <div class="brand-sub">共享大脑 · 分层下钻</div>
     </div>
-  </div>
+  </a>
   <div class="topbar-right">
-    <span class="legend"><i class="dot fact"></i>事实驱动</span>
-    <span class="legend"><i class="dot contract"></i>契约</span>
-    <span class="legend"><i class="dot danger"></i>越界标红</span>
     <a class="docs-link" href="/docs" target="_blank">设计蓝图 ↗</a>
     <span id="pulse" class="pulse" title="自动刷新中"></span>
   </div>
 </header>
 
-<main class="wrap" id="board"><!-- injected --></main>
-
-<div class="drawer" id="drawer">
-  <div class="drawer-inner">
-    <button class="drawer-close" id="drawerClose">×</button>
-    <div id="drawerBody"></div>
-  </div>
-</div>
-<div class="scrim" id="scrim"></div>
+<main class="wrap" id="app"><!-- routed --></main>
 
 <footer class="foot">控制点放在 Agent 外面 · 状态由事实翻牌，不由自陈</footer>
 
-<script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
