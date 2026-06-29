@@ -7,8 +7,10 @@
     "atlas": "cli/bin/atlas.js"
   },
   "scripts": {
-    "server": "node server/server.js",
-    "test": "node --test --no-warnings"
+    "check-env": "node scripts/check-env.mjs",
+    "init-env": "node scripts/init-env.mjs",
+    "server": "npm run check-env && node server/server.js",
+    "test": "npm run check-env && node --test --no-warnings"
   },
   "engines": {
     "node": ">=22.5.0"

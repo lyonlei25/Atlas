@@ -34,7 +34,7 @@ Atlas 自己也吃自己的狗粮：feature 状态只由**测试结果 / 真实 
 register 声明范围(基准线)  ──►  干活  ──►  契约测试通过
                                               │ 事实
                                               ▼
-                              服务端自动翻 contract=fulfilled / feature=verified
+                              服务端自动翻 contract=fulfilled / feature=done
                                               │
                                               ▼
                               业务模块读到「事实状态」才替换占位符（不认通知）
@@ -50,6 +50,10 @@ submit 交真实 diff ──► 服务端机械比对 declared vs actual ──�
 需要 **Node ≥ 22.5**（用到内置 `node:sqlite` / `node:http` / `node:test`，零外部依赖）。
 
 ```bash
+# 0. 初始化/检查本机环境（发布版推荐先跑）
+npm run init-env               # 给出 Node 22 安装/切换指引
+npm run check-env              # 严格检查 Node >= 22.5 且 node:sqlite 可用
+
 # 1. 启动共享大脑（看板 + API）
 npm run server                 # -> http://localhost:4317
 
@@ -60,6 +64,8 @@ node demo.mjs                  # 一键演示：状态翻牌 + 越界标红
 # 3. 打开看板看全局
 open http://localhost:4317/
 ```
+
+仓库内提供 `.node-version` 和 `.nvmrc`，`fnm` / `nvm` / `asdf` / `volta` 等版本管理器可据此切到 Node 22。Atlas 不会把 Node runtime 提交进仓库，也不会默认静默改你的全局环境。
 
 把 Atlas 接进你自己的工程：
 

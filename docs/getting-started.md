@@ -6,10 +6,20 @@
 
 ```bash
 git clone https://github.com/lyonlei25/Atlas.git && cd Atlas
+npm run init-env    # 先看本机 Node 22 安装/切换指引
+npm run check-env   # 必须通过：Node >= 22.5 且 node:sqlite 可用
 npm run server
 ```
 
 浏览器开 `http://localhost:4317/` —— 现在是空看板。
+
+仓库带 `.node-version` 和 `.nvmrc`，如果你使用 `fnm`、`nvm`、`asdf` 或 `volta`，可以直接按工具提示切到 Node 22。macOS 上也可以用 Homebrew：
+
+```bash
+brew install node@22
+brew link --overwrite node@22
+npm run check-env
+```
 
 ## 2. 让 `atlas` 成为命令
 
