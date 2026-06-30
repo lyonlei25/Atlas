@@ -5,13 +5,15 @@ Atlas 用自己治理自己（dogfood）：贡献时也走"事实驱动状态"�
 ## 前置
 
 - Node ≥ 22.5（用到内置 `node:sqlite` / `node:http` / `node:test`，**零外部依赖**，不用 `npm install`）。
+- 建议安装本地 Git hooks：`npm run hooks:install`。
 
 ## 本地跑起来
 
 ```bash
 git clone https://github.com/lyonlei25/Atlas.git && cd Atlas
 npm run server          # 共享大脑 http://localhost:4317
-node --test             # 跑测试（CI 跑同一条）
+npm run governance:check # 检查 Git 治理规则
+npm test                # 跑测试（CI 跑同一条）
 node examples/slice/demo.mjs   # 看最小纵切端到端
 ```
 
@@ -25,11 +27,21 @@ node examples/slice/demo.mjs   # 看最小纵切端到端
 
 ## 提 PR
 
-1. 从 `main` 切分支。
-2. `node --test` 全绿。
-3. PR 描述写清"改了什么 / 为什么 / 怎么验证"。
-4. CI（GitHub Actions 跑 `node --test`）必须绿。
+1. 先确认所属里程碑和目标分支，具体规则见 `docs/git-engineering-management-standard.md`。
+2. feature 从所属 `milestone/*` 分支切出，PR 目标也是该里程碑分支；不要直接向 `main` 合 feature。
+3. 在 `docs/feature-status.md` 更新 feature 状态。
+4. `npm run governance:check` 和 `npm test` 全绿。
+5. PR 描述使用仓库模板，写清"改了什么 / 为什么 / 怎么验证 / 风险和回滚"。
+6. CI 必须绿。
+
+分支语义：
+
+- `main`：存档主线。
+- `release`：持续发布主线。
+- `milestone/<id>-<name>`：里程碑集成分支。
+- `feature/<milestone>-<feature-id>`：feature 分支。
+- `fix/<milestone>-<bug-id>` 或 `fix/release-<bug-id>`：修复分支。
 
 ## 设计原则
 
-动手前建议读 `docs/`（7 份蓝图）。核心：控制点放在 Agent 外面，用事实而非自陈驱动状态。任何新功能都该问一句——**它是不是又让某个黑盒自己汇报自己了？**
+动手前建议读 `docs/`。核心：控制点放在 Agent 外面，用事实而非自陈驱动状态。任何新功能都该问一句——**它是不是又让某个黑盒自己汇报自己了？**

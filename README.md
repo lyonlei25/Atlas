@@ -3,7 +3,7 @@
 > AI-Native 工程治理工具包。把控制点放在 Agent 外面，用**事实**（git diff / 测试 / CI）而非**自陈**驱动状态。
 > 跨 **Claude Code / Codex**，可嵌入任意工程。
 
-完整设计蓝图见 [`docs/`](docs/)（7 份文档），或启动服务端后访问 `/docs` 看可视化版。
+完整设计蓝图见 [`docs/`](docs/)（8 份蓝图文档 + Git 工程管理标准），或启动服务端后访问 `/docs` 看可视化版。
 
 **新手从这开始** → [5 分钟上手](docs/getting-started.md) · **想贡献** → [CONTRIBUTING](CONTRIBUTING.md) · 开源协议 MIT · 零外部依赖（Node ≥ 22.5）
 
@@ -15,6 +15,8 @@
 > **不赌 Agent 不犯错，赌系统接得住它犯错。**
 
 Atlas 自己也吃自己的狗粮：feature 状态只由**测试结果 / 真实 diff** 翻牌，比对在服务端做，绝不让 Agent 自审。
+
+从 M2 开始，Atlas 自身开发也要把 Git 流程纳入需求约束：`main` 只做存档主线，`release` 作为持续发布主线，每个里程碑从稳定的 `release` 点切出独立 `milestone/*` 分支，feature 只能合回所属里程碑分支。这样每个里程碑都能独立查看、验证、回滚，并在验收后一次性合入 `release`。
 
 ---
 
@@ -53,6 +55,8 @@ submit 交真实 diff ──► 服务端机械比对 declared vs actual ──�
 # 0. 初始化/检查本机环境（发布版推荐先跑）
 npm run init-env               # 给出 Node 22 安装/切换指引
 npm run check-env              # 严格检查 Node >= 22.5 且 node:sqlite 可用
+npm run hooks:install          # 可选：安装本地 Git 治理 hooks
+npm run governance:check       # 检查分支、PR 目标和本地运行期文件
 
 # 1. 启动共享大脑（看板 + API）
 npm run server                 # -> http://localhost:4317

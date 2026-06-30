@@ -14,5 +14,7 @@ jobs:
         with:
           node-version: '22'
       # 零外部依赖：用 Node 内置 node:test / node:sqlite / node:http，无需 npm install
+      - name: Check Git governance
+        run: npm run governance:check
       - name: Run tests
-        run: node --test --no-warnings
+        run: npm test

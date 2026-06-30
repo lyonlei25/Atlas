@@ -52,6 +52,29 @@
 
 ---
 
+## Git 层的冻结：里程碑分支就是边界盒子
+
+L2 的「冻结」不只存在于看板字段里，也要落到 Git 分支结构上。Atlas 采用：
+
+```text
+main
+  └─ release
+       └─ milestone/<id>-<name>
+            └─ feature/<milestone>-<feature-id>
+```
+
+- `main` 是存档主线，只保存已经归档的稳定快照。
+- `release` 是持续发布主线，代表当前可发布、可演示的稳定状态。
+- `milestone/<id>-<name>` 是某个里程碑的独立集成分支，从 `release` 的稳定点切出。
+- 所属 feature 只能从该里程碑分支切出，并且只能合回该里程碑分支。
+- 里程碑整体验证通过后，再一次性合入 `release`。
+
+这样每个里程碑都是一个独立盒子：可以单独查看、测试、验收、回滚，不会把其他里程碑的未完成内容混进来。
+
+详细规则见 [`git-engineering-management-standard.md`](git-engineering-management-standard.md)。
+
+---
+
 ## 关键设计：范围蔓延要「吐回去」，不能「吞掉」
 
 开发中冒出来的、超出当前范围的发现，有三种命运，**只有一种是对的**：

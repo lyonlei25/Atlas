@@ -8,6 +8,8 @@
   },
   "scripts": {
     "check-env": "node scripts/check-env.mjs",
+    "governance:check": "node scripts/git-governance-check.mjs",
+    "hooks:install": "git config core.hooksPath .githooks",
     "init-env": "node scripts/init-env.mjs",
     "server": "npm run check-env && node server/server.js",
     "test": "npm run check-env && node --test --no-warnings"
