@@ -18,7 +18,7 @@
 
 | 编号 | Feature | 状态 | 依赖 | 分支 / PR | 验收入口 | 集成状态 | 备注 |
 |---|---|---|---|---|---|---|---|
-| `m2-git-flow` | 落地 Git 流程、PR 模板、基础治理检查 | `in_progress` | M1 基线、Node 22 环境初始化 | `feature/m2-git-flow` | `npm run governance:check && npm test` | 未合入 | M2 启动前置 |
+| `m2-git-flow` | 落地 Git 流程、PR 模板、基础治理检查 | `merged_to_milestone` | M1 基线、Node 22 环境初始化 | `feature/m2-git-flow` | `npm run governance:check && npm test` | 已合入 `milestone/m2-dogfood` | M2 启动前置 |
 
 ## M2 · Atlas dogfood
 

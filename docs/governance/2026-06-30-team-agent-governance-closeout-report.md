@@ -28,9 +28,9 @@ main
 | 分支 | 角色 | 当前状态 |
 |---|---|---|
 | `main` | 存档主线 | 已存在 |
-| `release` | 持续发布主线 | 本地已创建，远端待推送 |
-| `milestone/m2-dogfood` | M2 集成分支 | 本地已创建，远端待推送 |
-| `feature/m2-git-flow` | M2 前置治理 feature | 本地已提交，远端待推送 |
+| `release` | 持续发布主线 | 已推送远端 |
+| `milestone/m2-dogfood` | M2 集成分支 | 已推送远端，并接收 `m2-git-flow` |
+| `feature/m2-git-flow` | M2 前置治理 feature | 已推送远端，已合入 M2 里程碑分支 |
 
 ## 机器门禁
 
@@ -75,7 +75,6 @@ npm test
 
 ## 仍需人工确认的清理项
 
-- 补齐 GitHub 推送凭据后，把 `release`、`milestone/m2-dogfood` 和 `feature/m2-git-flow` 推送到远端。
 - 是否要求所有后续 PR 必须使用 `feature/*`，完全禁止 `codex/*` 进入 PR。
 - 是否在 GitHub 仓库设置中配置 branch protection，限制直接推送 `main`、`release` 和 `milestone/*`。
 
